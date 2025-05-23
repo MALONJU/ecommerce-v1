@@ -1,3 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-white text-mongodb-gray-900 antialiased;
+  }
+}
+
+@layer components {
+  .input-field {
+    @apply w-full px-4 py-3 bg-mongodb-gray-50 border-0 rounded-lg text-mongodb-gray-900 placeholder:text-mongodb-gray-500
+    focus:outline-none focus:ring-2 focus:ring-mongodb-green/20;
+  }
+
+  .error-field {
+    @apply ring-2 ring-red-500/20 !important;
+  }
+
+  .error-message {
+    @apply mt-1 text-sm text-red-500;
+  }
+
+  .btn-primary {
+    @apply flex w-full justify-center rounded-md bg-mongodb-green px-3 py-2.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-mongodb-darkgreen focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mongodb-green transition-colors duration-200;
+  }
+
+  .form-label {
+    @apply block text-sm font-medium leading-6 text-mongodb-gray-700;
+  }
+
+  .form-container {
+    @apply bg-white py-8 px-4 shadow-mongodb sm:rounded-lg sm:px-10;
+  }
+
+  .form-title {
+    @apply text-3xl font-bold text-mongodb-green;
+  }
+
+  .form-subtitle {
+    @apply text-sm text-mongodb-gray-600;
+  }
+
+  .link {
+    @apply font-medium text-mongodb-green hover:text-mongodb-darkgreen transition-colors duration-200;
+  }
+}
+
+/* Remove default styles */
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
