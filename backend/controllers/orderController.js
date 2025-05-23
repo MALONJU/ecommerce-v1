@@ -6,7 +6,7 @@ const Product = require('../models/Product');
 // @access  Private
 const createOrder = async (req, res) => {
     try {
-        const { items, totalAmount } = req.body;
+        const { items, totalAmount, shippingAddress } = req.body;
 
         // Verify stock availability and update product stock
         for (const item of items) {
@@ -29,13 +29,20 @@ const createOrder = async (req, res) => {
         const order = await Order.create({
             user: req.user._id,
             items,
-            totalAmount
+            totalAmount,
+            shippingAddress,
+            history: [{
+                status: 'pending',
+                comment: 'Order created',
+                updatedBy: req.user._id
+            }]
         });
 
         // Populate product details
         const populatedOrder = await Order.findById(order._id)
             .populate('user', 'name email')
-            .populate('items.product', 'name price imageUrl');
+            .populate('items.product', 'name price imageUrl')
+            .populate('history.updatedBy', 'name email');
 
         res.status(201).json(populatedOrder);
     } catch (error) {
@@ -51,6 +58,7 @@ const getOrders = async (req, res) => {
         const orders = await Order.find({})
             .populate('user', 'name email')
             .populate('items.product', 'name price imageUrl')
+            .populate('history.updatedBy', 'name email')
             .sort('-createdAt');
         res.json(orders);
     } catch (error) {
@@ -65,6 +73,7 @@ const getMyOrders = async (req, res) => {
     try {
         const orders = await Order.find({ user: req.user._id })
             .populate('items.product', 'name price imageUrl')
+            .populate('history.updatedBy', 'name email')
             .sort('-createdAt');
         res.json(orders);
     } catch (error) {
@@ -79,7 +88,8 @@ const getOrderById = async (req, res) => {
     try {
         const order = await Order.findById(req.params.id)
             .populate('user', 'name email')
-            .populate('items.product', 'name price imageUrl');
+            .populate('items.product', 'name price imageUrl')
+            .populate('history.updatedBy', 'name email');
 
         if (!order) {
             return res.status(404).json({ message: 'Order not found' });
@@ -104,17 +114,30 @@ const getOrderById = async (req, res) => {
 // @access  Private/Admin
 const updateOrderStatus = async (req, res) => {
     try {
-        const { status } = req.body;
+        const { status, comment } = req.body;
         const order = await Order.findById(req.params.id);
 
         if (!order) {
             return res.status(404).json({ message: 'Order not found' });
         }
 
+        // Add to history before updating status
+        order.history.push({
+            status,
+            comment: comment || `Status updated to ${status}`,
+            updatedBy: req.user._id
+        });
+
         order.status = status;
         const updatedOrder = await order.save();
 
-        res.json(updatedOrder);
+        // Populate the response
+        const populatedOrder = await Order.findById(updatedOrder._id)
+            .populate('user', 'name email')
+            .populate('items.product', 'name price imageUrl')
+            .populate('history.updatedBy', 'name email');
+
+        res.json(populatedOrder);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
@@ -146,6 +169,16 @@ const cancelOrder = async (req, res) => {
             });
         }
 
+        // Add cancellation to history
+        order.history.push({
+            status: 'cancelled',
+            comment: req.body.comment || 'Order cancelled by user',
+            updatedBy: req.user._id
+        });
+
+        order.status = 'cancelled';
+        await order.save();
+
         // Restore product stock
         for (const item of order.items) {
             const product = await Product.findById(item.product);
@@ -155,10 +188,64 @@ const cancelOrder = async (req, res) => {
             }
         }
 
-        await Order.deleteOne({ _id: req.params.id });
         res.json({ message: 'Order cancelled successfully' });
     } catch (error) {
         res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Get order history
+// @route   GET /api/orders/:id/history
+// @access  Private
+const getOrderHistory = async (req, res) => {
+    try {
+        const order = await Order.findById(req.params.id)
+            .populate('history.updatedBy', 'name email');
+
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
+
+        // Check authorization
+        if (order.user.toString() !== req.user._id.toString() && 
+            req.user.role !== 'admin') {
+            return res.status(401).json({ 
+                message: 'Not authorized to view this order history' 
+            });
+        }
+
+        res.json(order.history);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Add history comment
+// @route   POST /api/orders/:id/history
+// @access  Private/Admin
+const addHistoryComment = async (req, res) => {
+    try {
+        const { comment } = req.body;
+        const order = await Order.findById(req.params.id);
+
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
+
+        order.history.push({
+            status: order.status,
+            comment,
+            updatedBy: req.user._id
+        });
+
+        await order.save();
+
+        const updatedOrder = await Order.findById(order._id)
+            .populate('history.updatedBy', 'name email');
+
+        res.json(updatedOrder.history);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
     }
 };
 
@@ -168,5 +255,7 @@ module.exports = {
     getMyOrders,
     getOrderById,
     updateOrderStatus,
-    cancelOrder
+    cancelOrder,
+    getOrderHistory,
+    addHistoryComment
 }; 
