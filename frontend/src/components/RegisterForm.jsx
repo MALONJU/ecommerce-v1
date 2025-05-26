@@ -2,6 +2,7 @@ import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 import { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom'; // <-- Ajoute Link ici
 
 const validationSchema = Yup.object({
   firstName: Yup.string()
@@ -17,6 +18,7 @@ const validationSchema = Yup.object({
 
 const RegisterForm = () => {
   const [apiError, setApiError] = useState('');
+  const navigate = useNavigate();
 
   const initialValues = {
     firstName: '',
@@ -27,35 +29,27 @@ const RegisterForm = () => {
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     try {
       setApiError('');
-      
-      // Adapter les données pour correspondre à l'attente du backend
       const userData = {
-        name: values.firstName, // Conversion de firstName en name pour le backend
+        name: values.firstName,
         email: values.email,
         password: values.password,
       };
 
-      // Appel à l'API
       const response = await axios.post('http://localhost:3000/api/auth/register', userData);
 
-      // Stocker le token dans le localStorage
       if (response.data.token) {
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data));
+        // Redirection après inscription réussie
+        navigate('/profile'); // ou '/login' selon ton besoin
       }
 
-      // Réinitialiser le formulaire en cas de succès
       resetForm();
-
-      // Rediriger vers la page d'accueil ou le dashboard
-      // Note: Vous devrez implémenter la redirection avec react-router-dom
       console.log('Inscription réussie:', response.data);
-      
-      // Vous pouvez ajouter ici un message de succès ou une redirection
     } catch (error) {
       console.error('Erreur lors de l\'inscription:', error);
       setApiError(
-        error.response?.data?.message || 
+        error.response?.data?.message ||
         'Une erreur est survenue lors de l\'inscription. Veuillez réessayer.'
       );
     } finally {
@@ -145,7 +139,7 @@ const RegisterForm = () => {
 
                 {/* Lien vers connexion */}
                 <p className="text-center mt-3">
-                  Vous avez déjà un compte ? <a href="#" className="text-decoration-none">Se connecter</a>
+                  Vous avez déjà un compte ? <Link to="/login" className="text-decoration-none">Se connecter</Link>
                 </p>
               </Form>
             )}
