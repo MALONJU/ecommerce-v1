@@ -23,7 +23,7 @@ const LoginForm = () => {
       if (response.data.token) {
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data));
-        navigate('/profile'); // Redirection vers la page profil après connexion
+        navigate('/products'); // Redirection vers la page profil après connexion
       }
     } catch (error) {
       setApiError(
