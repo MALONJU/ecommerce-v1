@@ -6,6 +6,7 @@ require("dotenv").config();
 // Import routes
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
+const productRoutes = require('./routes/productRoutes');
 
 const app = express();
 
@@ -22,7 +23,7 @@ mongoose
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
-
+app.use('/api/products', productRoutes);
 // Basic route
 app.get("/", (req, res) => {
   res.send("API is running");
