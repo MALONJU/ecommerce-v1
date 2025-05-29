@@ -17,16 +17,19 @@ router.get('/profile', protect, getProfile);
 router.put('/profile', protect, updateProfile);
 router.put('/change-password', protect, changePassword);
 
-// Admin routes - require both protect and admin middleware
+// Apply protect and admin middleware to all routes below this point
+router.use(protect, admin);
+
+// Admin routes - all routes below inherit protect + admin middleware
 router.route('/')
-    .get(protect, admin, getUsers);
+    .get(getUsers);
 
 router.route('/:id')
-    .get(protect, admin, getUserById)
-    .put(protect, admin, updateUser)
-    .delete(protect, admin, deleteUser);
+    .get(getUserById)
+    .put(updateUser)
+    .delete(deleteUser);
 
 router.route('/:id/role')
-    .put(protect, admin, updateUserRole);
+    .put(updateUserRole);
 
 module.exports = router;
