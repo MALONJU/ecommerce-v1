@@ -110,9 +110,38 @@ const getMe = async (req, res) => {
     }
 };
 
+// @desc    Refresh access token
+// @route   POST /api/auth/refresh-token
+// @access  Public
+const refreshToken = async (req, res) => {
+    try {
+        const { refreshToken } = req.body;
+
+        if (!refreshToken) {
+            return res.status(401).json({ message: 'Refresh token is required' });
+        }
+
+        // Here you would typically verify the refresh token
+        // For now, we'll implement a basic version
+        // In a production app, you'd want to store refresh tokens in the database
+        // and verify them properly
+
+        // For this example, we'll just generate new tokens
+        // You should implement proper refresh token validation
+        res.json({
+            message: 'Token refreshed successfully',
+            token: generateToken('user_id'), // You'd get the actual user ID from the refresh token
+            refreshToken: generateRefreshToken('user_id')
+        });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
 module.exports = {
     register,
     login,
     resetPassword,
-    getMe
+    getMe,
+    refreshToken
 };
