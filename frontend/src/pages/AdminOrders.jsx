@@ -297,6 +297,7 @@ export default function AdminOrders() {
       {showModal && selectedOrder && (
         <OrderStatusModal
           order={selectedOrder}
+          isOpen={showModal}
           onClose={handleCloseModal}
           onOrderUpdated={handleOrderUpdated}
         />
