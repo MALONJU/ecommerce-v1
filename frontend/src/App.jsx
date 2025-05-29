@@ -7,6 +7,7 @@ import LoginForm from './components/LoginForm.jsx';
 import RegisterForm from './components/RegisterForm.jsx';
 import UserManagementPage from './pages/UserManagementPage.jsx';
 import AdminDashboard from './pages/AdminDashboard.jsx';
+import Shop from './pages/Shop.jsx';
 import './App.css';
 import Products from './pages/Products.jsx';
 
@@ -42,6 +43,16 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Shop route - accessible to all authenticated users */}
+            <Route
+              path="/shop"
+              element={
+                <ProtectedRoute>
+                  <Shop />
                 </ProtectedRoute>
               }
             />
