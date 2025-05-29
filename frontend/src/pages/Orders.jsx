@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import { orderService } from "../services/apiService";
 
@@ -41,47 +42,33 @@ export default function Orders() {
     }
   };
 
-  const getStatusColor = (status) => {
+  const getStatusBadgeClass = (status) => {
     switch (status) {
       case "pending":
-        return {
-          backgroundColor: "orange",
-          color: "black",
-        };
+        return "badge bg-warning text-dark";
       case "processing":
-        return {
-          backgroundColor: "blue",
-          color: "black",
-        };
+        return "badge bg-info text-dark";
       case "shipped":
-        return {
-          backgroundColor: "purple",
-          color: "black",
-        };
+        return "badge bg-primary";
       case "delivered":
-        return {
-          backgroundColor: "green",
-          color: "black",
-        };
+        return "badge bg-success";
       case "cancelled":
-        return {
-          backgroundColor: "red",
-          color: "black",
-        };
+        return "badge bg-danger";
       default:
-        return {
-          backgroundColor: "gray",
-          color: "black",
-        };
+        return "badge bg-secondary";
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading your orders...</p>
+      <div className="container py-5">
+        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '400px' }}>
+          <div className="text-center">
+            <div className="spinner-border text-primary mb-3" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+            <p className="text-muted">Loading your orders...</p>
+          </div>
         </div>
       </div>
     );
@@ -89,117 +76,126 @@ export default function Orders() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-red-500 text-lg mb-4">{error}</div>
-          <button
-            onClick={fetchOrders}
-            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
-          >
-            Try Again
-          </button>
+      <div className="container py-5">
+        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '400px' }}>
+          <div className="text-center">
+            <div className="alert alert-danger mb-3">{error}</div>
+            <button
+              onClick={fetchOrders}
+              className="btn btn-primary"
+            >
+              Try Again
+            </button>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">My Orders</h1>
-          <p className="text-gray-600">View and manage your order history</p>
+    <div className="container py-4">
+      {/* Header */}
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h1 className="h2 mb-1">My Orders</h1>
+          <p className="text-muted mb-0">View and manage your order history</p>
         </div>
+        <div className="text-muted">
+          <i className="bi bi-box-seam me-1"></i>
+          {orders.length} order{orders.length !== 1 ? 's' : ''}
+        </div>
+      </div>
 
-        {/* Orders List */}
-        {orders.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="text-gray-500 text-lg mb-4">No orders found</div>
-            <p className="text-gray-400 mb-6">
-              You haven't placed any orders yet.
-            </p>
-            <Link
-              to="/shop"
-              className="inline-block bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
-            >
-              Start Shopping
-            </Link>
-          </div>
-        ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(400px, 1fr))", gap: "1.5rem" }}>
-            {orders.map((order) => (
-              <div
-                key={order._id}
-                className="bg-white rounded-lg shadow-md overflow-hidden"
-              >
+      {/* Orders List */}
+      {orders.length === 0 ? (
+        <div className="text-center py-5">
+          <i className="bi bi-bag-x display-1 text-muted mb-3"></i>
+          <h4 className="text-muted mb-3">No orders found</h4>
+          <p className="text-muted mb-4">
+            You haven't placed any orders yet.
+          </p>
+          <Link
+            to="/shop"
+            className="btn btn-primary"
+          >
+            <i className="bi bi-shop me-2"></i>
+            Start Shopping
+          </Link>
+        </div>
+      ) : (
+        <div className="row">
+          {orders.map((order) => (
+            <div key={order._id} className="col-12 mb-4">
+              <div className="card shadow-sm">
                 {/* Order Header */}
-                <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-                    <div className="mb-2 md:mb-0">
-                      <h3 className="text-lg font-semibold text-gray-900">
+                <div className="card-header bg-light">
+                  <div className="row align-items-center">
+                    <div className="col-md-6">
+                      <h5 className="card-title mb-1">
+                        <i className="bi bi-receipt me-2"></i>
                         Order #{order._id.slice(-8).toUpperCase()}
-                      </h3>
-                      <p className="text-sm text-gray-600">
-                        Placed on{" "}
-                        {new Date(order.createdAt).toLocaleDateString()}
-                      </p>
+                      </h5>
+                      <small className="text-muted">
+                        <i className="bi bi-calendar3 me-1"></i>
+                        Placed on {new Date(order.createdAt).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })}
+                      </small>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <span
-                        style={{
-                          padding: "0.5rem 1rem",
-                          borderRadius: "0.5rem",
-                          fontSize: "0.875rem",
-                          fontWeight: "500",
-                          ...getStatusColor(order.status),
-                        }}
-                      >
-                        {order.status.charAt(0).toUpperCase() +
-                          order.status.slice(1)}
-                      </span>
-                      <span className="text-lg font-bold text-gray-900">
-                        ${order.totalAmount}
-                      </span>
+                    <div className="col-md-6 text-md-end">
+                      <div className="d-flex flex-column align-items-md-end">
+                        <span className={getStatusBadgeClass(order.status)}>
+                          {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                        </span>
+                        <h5 className="mb-0 mt-2">
+                          <strong>${order.totalAmount}</strong>
+                        </h5>
+                      </div>
                     </div>
                   </div>
                 </div>
 
                 {/* Order Items */}
-                <div className="p-6">
-                  <h4 className="text-lg font-medium text-gray-900 mb-4">
-                    Order Items
-                  </h4>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1rem" }}>
+                <div className="card-body">
+                  <h6 className="card-subtitle mb-3 text-muted">
+                    <i className="bi bi-box me-1"></i>
+                    Order Items ({order.items.length})
+                  </h6>
+                  <div className="row">
                     {order.items.map((item, index) => (
-                      <ProductCard
-                        key={index}
-                        product={item.product}
-                        showOrderButton={false}
-                        isOrderView={true}
-                        quantity={item.quantity}
-                      />
+                      <div key={index} className="col-md-6 col-lg-4 mb-3">
+                        <ProductCard
+                          product={item.product}
+                          showOrderButton={false}
+                          isOrderView={true}
+                          quantity={item.quantity}
+                        />
+                      </div>
                     ))}
                   </div>
                 </div>
 
-                {/* Order Actions */}
-                <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-                    <div className="text-sm text-gray-600 mb-2 md:mb-0">
+                {/* Order Footer */}
+                <div className="card-footer bg-light">
+                  <div className="row align-items-center">
+                    <div className="col-md-8">
                       {order.shippingAddress && (
-                        <span>
-                          Shipping to: {order.shippingAddress.address},{" "}
-                          {order.shippingAddress.city}
-                        </span>
+                        <div className="text-muted small">
+                          <i className="bi bi-geo-alt me-1"></i>
+                          Shipping to: {order.shippingAddress.address}, {order.shippingAddress.city}
+                          {order.shippingAddress.postalCode && `, ${order.shippingAddress.postalCode}`}
+                        </div>
                       )}
                     </div>
-                    <div className="flex gap-2">
+                    <div className="col-md-4 text-md-end">
                       {order.status === "pending" && (
                         <button
                           onClick={() => handleCancelOrder(order._id)}
-                          className="btn-danger text-sm"
+                          className="btn btn-outline-danger btn-sm"
                         >
+                          <i className="bi bi-x-circle me-1"></i>
                           Cancel Order
                         </button>
                       )}
@@ -207,10 +203,10 @@ export default function Orders() {
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
-      </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

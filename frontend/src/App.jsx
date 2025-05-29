@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
+import ErrorBoundary from './components/ErrorBoundary.jsx';
 import Navbar from './components/Navbar.jsx';
 import LoginForm from './components/LoginForm.jsx';
 import RegisterForm from './components/RegisterForm.jsx';
@@ -63,7 +64,9 @@ function App() {
               path="/orders"
               element={
                 <ProtectedRoute>
-                  <Orders />
+                  <ErrorBoundary>
+                    <Orders />
+                  </ErrorBoundary>
                 </ProtectedRoute>
               }
             />
