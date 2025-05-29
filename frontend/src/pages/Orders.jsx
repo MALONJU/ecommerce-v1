@@ -14,7 +14,7 @@ export default function Orders() {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const data = await orderService.getOrders();
+      const data = await orderService.getMyOrders();
       setOrders(data);
     } catch (error) {
       setError("Failed to load orders");
