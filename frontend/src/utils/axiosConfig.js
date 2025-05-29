@@ -291,7 +291,7 @@ const retryRequest = async (config, retries = 3, delay = 1000) => {
       return await axiosInstance(config);
     } catch (error) {
       // Don't retry auth errors or if this is the last attempt
-      if (i === retries - 1 || error.isAuthError || error.status < 500) {
+      if (i === retries - 1 || error.isAuthError || error.response?.status < 500) {
         throw error;
       }
 
