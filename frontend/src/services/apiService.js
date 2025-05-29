@@ -1,26 +1,89 @@
 import apiClient from "../utils/axiosConfig.js";
+import { tokenManager } from "../utils/axiosConfig.js";
 
 // Authentication Services
 export const authService = {
-  login: async (credentials) => {
-    return await apiClient.post("/auth/login", credentials);
+  login: async (credentials, rememberMe = false) => {
+    const response = await apiClient.post("/auth/login", credentials);
+
+    // Store tokens and user data if login successful
+    if (response.token) {
+      tokenManager.setTokens(response.token, response.refreshToken, rememberMe);
+
+      if (response.user) {
+        tokenManager.setUserData(response.user, rememberMe);
+      }
+    }
+
+    return response;
   },
 
-  register: async (userData) => {
-    return await apiClient.post("/auth/register", userData);
+  register: async (userData, rememberMe = false) => {
+    const response = await apiClient.post("/auth/register", userData);
+
+    // Store tokens and user data if registration successful
+    if (response.token) {
+      tokenManager.setTokens(response.token, response.refreshToken, rememberMe);
+
+      if (response.user) {
+        tokenManager.setUserData(response.user, rememberMe);
+      }
+    }
+
+    return response;
   },
 
   logout: async () => {
-    return await apiClient.post("/auth/logout");
+    try {
+      // Call logout endpoint to invalidate refresh token on server
+      await apiClient.post("/auth/logout", {
+        refreshToken: tokenManager.getRefreshToken()
+      });
+    } catch (error) {
+      // Even if logout endpoint fails, we should clear local tokens
+      console.warn('Logout endpoint failed, clearing local tokens anyway:', error);
+    } finally {
+      // Always clear local tokens
+      tokenManager.clearTokens();
+    }
   },
 
-  refreshToken: async () => {
-    return await apiClient.post("/auth/refresh-token");
+  refreshToken: async (refreshToken) => {
+    // Note: This is primarily used by the axios interceptor
+    // Manual refresh token calls should include the refresh token
+    const tokenToUse = refreshToken || tokenManager.getRefreshToken();
+
+    if (!tokenToUse) {
+      throw new Error('No refresh token available');
+    }
+
+    return await apiClient.post("/auth/refresh-token", {
+      refreshToken: tokenToUse
+    });
   },
 
   getCurrentUser: async () => {
     return await apiClient.get("/auth/me");
   },
+
+  // Check if user is authenticated
+  isAuthenticated: () => {
+    const token = tokenManager.getAccessToken();
+    return token && !tokenManager.isTokenExpired(token);
+  },
+
+  // Get current user data from storage (no API call)
+  getCurrentUserData: () => {
+    return tokenManager.getUserData();
+  },
+
+  // Validate token without making API call
+  validateToken: () => {
+    const token = tokenManager.getAccessToken();
+    if (!token) return false;
+
+    return !tokenManager.isTokenExpired(token);
+  }
 };
 
 // Product Services

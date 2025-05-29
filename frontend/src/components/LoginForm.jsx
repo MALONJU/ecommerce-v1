@@ -1,8 +1,8 @@
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
-import axios from 'axios';
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext.jsx';
 
 const validationSchema = Yup.object({
   email: Yup.string().email('Email invalide').required('Email requis'),
@@ -11,23 +11,35 @@ const validationSchema = Yup.object({
 
 const LoginForm = () => {
   const [apiError, setApiError] = useState('');
+  const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const initialValues = { email: '', password: '' };
+  const initialValues = {
+    email: '',
+    password: '',
+    rememberMe: false
+  };
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       setApiError('');
-      const response = await axios.post('http://localhost:3000/api/auth/login', values);
 
-      if (response.data.token) {
-        localStorage.setItem('token', response.data.token);
-        localStorage.setItem('user', JSON.stringify(response.data));
-        navigate('/products'); // Redirection vers la page profil après connexion
-      }
+      // Use AuthContext login method to properly update auth state
+      await login(
+        { email: values.email, password: values.password },
+        values.rememberMe
+      );
+
+      // Check if user was trying to access a protected route before login
+      const from = location.state?.from?.pathname || '/dashboard';
+      navigate(from, { replace: true });
+
     } catch (error) {
+      console.error('Login error:', error);
       setApiError(
-        error.response?.data?.message ||
+        error.message ||
+        error.data?.message ||
         'Erreur lors de la connexion. Veuillez réessayer.'
       );
     } finally {
@@ -46,13 +58,36 @@ const LoginForm = () => {
               <Form>
                 <div className="mb-3">
                   <label htmlFor="email" className="form-label">Email</label>
-                  <Field id="email" name="email" type="email" className={`form-control ${errors.email && touched.email ? 'is-invalid' : ''}`} />
+                  <Field
+                    id="email"
+                    name="email"
+                    type="email"
+                    className={`form-control ${errors.email && touched.email ? 'is-invalid' : ''}`}
+                  />
                   {errors.email && touched.email && <div className="invalid-feedback">{errors.email}</div>}
                 </div>
-                <div className="mb-4">
+                <div className="mb-3">
                   <label htmlFor="password" className="form-label">Mot de passe</label>
-                  <Field id="password" name="password" type="password" className={`form-control ${errors.password && touched.password ? 'is-invalid' : ''}`} />
+                  <Field
+                    id="password"
+                    name="password"
+                    type="password"
+                    className={`form-control ${errors.password && touched.password ? 'is-invalid' : ''}`}
+                  />
                   {errors.password && touched.password && <div className="invalid-feedback">{errors.password}</div>}
+                </div>
+                <div className="mb-4">
+                  <div className="form-check">
+                    <Field
+                      id="rememberMe"
+                      name="rememberMe"
+                      type="checkbox"
+                      className="form-check-input"
+                    />
+                    <label htmlFor="rememberMe" className="form-check-label">
+                      Se souvenir de moi
+                    </label>
+                  </div>
                 </div>
                 <button type="submit" className="btn btn-primary w-100 py-2" disabled={isSubmitting}>
                   {isSubmitting ? 'Connexion...' : 'Se connecter'}

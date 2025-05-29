@@ -7,7 +7,11 @@ const bcrypt = require('bcryptjs');
 // @access  Public
 const register = async (req, res) => {
     try {
-        const { name, email, password } = req.body;
+        const { name, email, password, role } = req.body;
+
+        // Validate role if provided
+        const allowedRoles = ['user', 'admin'];
+        const userRole = role && allowedRoles.includes(role) ? role : 'user';
 
         // Check if user exists
         const userExists = await User.findOne({ email });
@@ -15,14 +19,17 @@ const register = async (req, res) => {
             return res.status(400).json({ message: 'User already exists' });
         }
 
-        // Create user
+        // Create user with specified role
         const user = await User.create({
             name,
             email,
-            password
+            password,
+            role: userRole
         });
 
         if (user) {
+            console.log(`✅ [Auth] New ${userRole} registered: ${email}`);
+
             res.status(201).json({
                 _id: user._id,
                 name: user.name,
@@ -33,6 +40,7 @@ const register = async (req, res) => {
             });
         }
     } catch (error) {
+        console.error('❌ [Auth] Registration error:', error);
         res.status(400).json({ message: error.message });
     }
 };
@@ -66,6 +74,45 @@ const login = async (req, res) => {
         });
     } catch (error) {
         res.status(400).json({ message: error.message });
+    }
+};
+
+// @desc    Logout user
+// @route   POST /api/auth/logout
+// @access  Public (since we're just invalidating tokens)
+const logout = async (req, res) => {
+    try {
+        const { refreshToken } = req.body;
+
+        // Log the logout attempt
+        console.log('🔐 [Auth] Logout request received');
+
+        // In a production application, you would:
+        // 1. Add the refresh token to a blacklist/revoked tokens database
+        // 2. Optionally invalidate all sessions for the user
+        // 3. Clear any server-side session data
+
+        // For now, we'll just acknowledge the logout
+        // The client-side will handle clearing the tokens from storage
+
+        if (refreshToken) {
+            console.log('🔐 [Auth] Refresh token provided for logout');
+            // TODO: Add refresh token to blacklist in database
+            // await RefreshToken.create({ token: refreshToken, revokedAt: new Date() });
+        }
+
+        res.json({
+            message: 'Logout successful',
+            success: true
+        });
+
+        console.log('✅ [Auth] Logout completed successfully');
+    } catch (error) {
+        console.error('❌ [Auth] Logout error:', error);
+        res.status(500).json({
+            message: 'Logout failed',
+            error: error.message
+        });
     }
 };
 
@@ -141,6 +188,7 @@ const refreshToken = async (req, res) => {
 module.exports = {
     register,
     login,
+    logout,
     resetPassword,
     getMe,
     refreshToken
