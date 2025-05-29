@@ -71,6 +71,7 @@ const UserManagement = () => {
   };
 
   const formatDate = (dateString) => {
+    if (!dateString) return '-';
     return new Date(dateString).toLocaleDateString();
   };
 
