@@ -38,4 +38,4 @@ All products include:
 
 Make sure your MongoDB connection is configured in your `.env` file or environment variables before running the seed script.
 
-The script will use the `MONGODB_URI` environment variable or default to `mongodb://localhost:27017/ecommerce`.
+The script will use the `MONGODB_URI` environment variable or if not set, will fail.
