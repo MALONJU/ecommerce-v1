@@ -1,6 +1,5 @@
 const User = require('../models/User');
 const { generateToken, generateRefreshToken } = require('../utils/generateToken');
-const bcrypt = require('bcryptjs');
 
 // @desc    Register a new user
 // @route   POST /api/auth/register
@@ -116,35 +115,6 @@ const logout = async (req, res) => {
     }
 };
 
-// @desc    Reset password
-// @route   POST /api/auth/reset-password
-// @access  Public
-const resetPassword = async (req, res) => {
-    try {
-        const { email, currentPassword, newPassword } = req.body;
-
-        // Find user
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        // Verify current password
-        const isMatch = await user.matchPassword(currentPassword);
-        if (!isMatch) {
-            return res.status(401).json({ message: 'Current password is incorrect' });
-        }
-
-        // Update password
-        user.password = newPassword;
-        await user.save();
-
-        res.json({ message: 'Password updated successfully' });
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
-};
-
 // @desc    Get current user profile
 // @route   GET /api/auth/me
 // @access  Private
@@ -189,7 +159,6 @@ module.exports = {
     register,
     login,
     logout,
-    resetPassword,
     getMe,
     refreshToken
 };

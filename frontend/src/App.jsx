@@ -7,12 +7,14 @@ import LoginForm from './components/LoginForm.jsx';
 import RegisterForm from './components/RegisterForm.jsx';
 import UserManagementPage from './pages/UserManagementPage.jsx';
 import AdminDashboard from './pages/AdminDashboard.jsx';
+import AdminOrders from './pages/AdminOrders.jsx';
+import Shop from './pages/Shop.jsx';
+import Orders from './pages/Orders.jsx';
 import './App.css';
 import Products from './pages/Products.jsx';
 
 // Example components (you may need to create these)
 const Dashboard = () => <div className="container mt-4"><h1>Dashboard</h1></div>;
-const Profile = () => <div className="container mt-4"><h1>Profile</h1></div>;
 const Unauthorized = () => (
   <div className="container mt-4">
     <div className="alert alert-danger">
@@ -46,20 +48,31 @@ function App() {
               }
             />
 
+            {/* Shop route - accessible to all authenticated users */}
             <Route
-              path="/products"
+              path="/shop"
               element={
                 <ProtectedRoute>
-                  <Products />
+                  <Shop />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Orders route - accessible to all authenticated users */}
+            <Route
+              path="/orders"
+              element={
+                <ProtectedRoute>
+                  <Orders />
                 </ProtectedRoute>
               }
             />
 
             <Route
-              path="/profile"
+              path="/products"
               element={
-                <ProtectedRoute>
-                  <Profile />
+                <ProtectedRoute requiredRole="admin">
+                  <Products />
                 </ProtectedRoute>
               }
             />
@@ -70,6 +83,16 @@ function App() {
               element={
                 <ProtectedRoute requiredRole="admin">
                   <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Admin Orders Management */}
+            <Route
+              path="/admin/orders"
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <AdminOrders />
                 </ProtectedRoute>
               }
             />

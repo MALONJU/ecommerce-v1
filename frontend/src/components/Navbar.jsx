@@ -90,18 +90,17 @@ const Navbar = () => {
               </Link>
             </li>
             <li className="nav-item">
-              <Link className={isActiveRoute('/products')} to="/products">
-                <i className="bi bi-box-seam me-1"></i>
-                Products
+              <Link className={isActiveRoute('/shop')} to="/shop">
+                <i className="bi bi-shop me-1"></i>
+                Shop
               </Link>
             </li>
             <li className="nav-item">
-              <Link className={isActiveRoute('/profile')} to="/profile">
-                <i className="bi bi-person me-1"></i>
-                Profile
+              <Link className={isActiveRoute('/orders')} to="/orders">
+                <i className="bi bi-bag-check me-1"></i>
+                My Orders
               </Link>
             </li>
-
             {/* Admin link - only show if user has admin role */}
             {getUserRole().toLowerCase().includes('admin') && (
               <li className="nav-item dropdown">
@@ -120,6 +119,18 @@ const Navbar = () => {
                     <Link className="dropdown-item" to="/admin">
                       <i className="bi bi-speedometer2 me-2"></i>
                       Dashboard
+                    </Link>
+                  </li>
+                  <li>
+                    <Link className="dropdown-item" to="/products">
+                      <i className="bi bi-box me-2"></i>
+                      Product Management
+                    </Link>
+                  </li>
+                  <li>
+                    <Link className="dropdown-item" to="/admin/orders">
+                      <i className="bi bi-box-seam me-2"></i>
+                      Order Management
                     </Link>
                   </li>
                   <li>
@@ -178,12 +189,6 @@ const Navbar = () => {
                   </div>
                 </li>
                 <li><hr className="dropdown-divider" /></li>
-                <li>
-                  <Link className="dropdown-item" to="/profile">
-                    <i className="bi bi-person me-2"></i>
-                    My Profile
-                  </Link>
-                </li>
                 <li>
                   <a className="dropdown-item" href="#" onClick={(e) => { e.preventDefault(); /* Add settings modal */ }}>
                     <i className="bi bi-gear me-2"></i>

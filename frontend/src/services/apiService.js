@@ -1,5 +1,4 @@
-import apiClient from "../utils/axiosConfig.js";
-import { tokenManager } from "../utils/axiosConfig.js";
+import apiClient, { tokenManager } from "../utils/axiosConfig.js";
 
 // Authentication Services
 export const authService = {
@@ -37,11 +36,14 @@ export const authService = {
     try {
       // Call logout endpoint to invalidate refresh token on server
       await apiClient.post("/auth/logout", {
-        refreshToken: tokenManager.getRefreshToken()
+        refreshToken: tokenManager.getRefreshToken(),
       });
     } catch (error) {
       // Even if logout endpoint fails, we should clear local tokens
-      console.warn('Logout endpoint failed, clearing local tokens anyway:', error);
+      console.warn(
+        "Logout endpoint failed, clearing local tokens anyway:",
+        error
+      );
     } finally {
       // Always clear local tokens
       tokenManager.clearTokens();
@@ -54,11 +56,11 @@ export const authService = {
     const tokenToUse = refreshToken || tokenManager.getRefreshToken();
 
     if (!tokenToUse) {
-      throw new Error('No refresh token available');
+      throw new Error("No refresh token available");
     }
 
     return await apiClient.post("/auth/refresh-token", {
-      refreshToken: tokenToUse
+      refreshToken: tokenToUse,
     });
   },
 
@@ -83,7 +85,7 @@ export const authService = {
     if (!token) return false;
 
     return !tokenManager.isTokenExpired(token);
-  }
+  },
 };
 
 // Product Services
@@ -107,32 +109,10 @@ export const productService = {
   deleteProduct: async (id) => {
     return await apiClient.delete(`/products/${id}`);
   },
-
-  searchProducts: async (query, filters = {}) => {
-    return await apiClient.get("/products/search", {
-      params: { q: query, ...filters },
-    });
-  },
 };
 
 // User Services
 export const userService = {
-  getProfile: async () => {
-    return await apiClient.get("/users/profile");
-  },
-
-  updateProfile: async (profileData) => {
-    return await apiClient.put("/users/profile", profileData);
-  },
-
-  changePassword: async (passwordData) => {
-    return await apiClient.put("/users/change-password", passwordData);
-  },
-
-  uploadAvatar: async (file, onProgress) => {
-    return await apiClient.upload("/users/avatar", file, onProgress);
-  },
-
   // Admin User Management Services
   getAllUsers: async () => {
     return await apiClient.get("/users");
@@ -161,6 +141,10 @@ export const orderService = {
     return await apiClient.get("/orders", { params });
   },
 
+  getMyOrders: async (params = {}) => {
+    return await apiClient.get("/orders/myorders", { params });
+  },
+
   getOrder: async (id) => {
     return await apiClient.get(`/orders/${id}`);
   },
@@ -169,84 +153,14 @@ export const orderService = {
     return await apiClient.post("/orders", orderData);
   },
 
-  updateOrderStatus: async (id, status) => {
-    return await apiClient.patch(`/orders/${id}/status`, { status });
+  updateOrderStatus: async (id, statusData) => {
+    return await apiClient.put(`/orders/${id}/status`, statusData);
   },
 
   cancelOrder: async (id) => {
-    return await apiClient.post(`/orders/${id}/cancel`);
-  },
-};
-
-// Cart Services
-export const cartService = {
-  getCart: async () => {
-    return await apiClient.get("/cart");
-  },
-
-  addToCart: async (productId, quantity = 1) => {
-    return await apiClient.post("/cart/items", { productId, quantity });
-  },
-
-  updateCartItem: async (itemId, quantity) => {
-    return await apiClient.put(`/cart/items/${itemId}`, { quantity });
-  },
-
-  removeFromCart: async (itemId) => {
-    return await apiClient.delete(`/cart/items/${itemId}`);
-  },
-
-  clearCart: async () => {
-    return await apiClient.delete("/cart");
-  },
-};
-
-// Category Services
-export const categoryService = {
-  getCategories: async () => {
-    return await apiClient.get("/categories");
-  },
-
-  getCategory: async (id) => {
-    return await apiClient.get(`/categories/${id}`);
-  },
-
-  createCategory: async (categoryData) => {
-    return await apiClient.post("/categories", categoryData);
-  },
-
-  updateCategory: async (id, categoryData) => {
-    return await apiClient.put(`/categories/${id}`, categoryData);
-  },
-
-  deleteCategory: async (id) => {
-    return await apiClient.delete(`/categories/${id}`);
-  },
-};
-
-// File Services
-export const fileService = {
-  uploadImage: async (file, onProgress) => {
-    return await apiClient.upload("/files/upload", file, onProgress);
-  },
-
-  downloadFile: async (fileId, filename) => {
-    return await apiClient.download(`/files/${fileId}`, filename);
-  },
-};
-
-// Analytics Services
-export const analyticsService = {
-  getDashboardStats: async () => {
-    return await apiClient.get("/analytics/dashboard");
-  },
-
-  getSalesReport: async (dateRange) => {
-    return await apiClient.get("/analytics/sales", { params: dateRange });
-  },
-
-  getProductAnalytics: async (productId) => {
-    return await apiClient.get(`/analytics/products/${productId}`);
+    return await apiClient.delete(`/orders/${id}`, {
+      data: { comment: "Order cancelled by user" },
+    });
   },
 };
 
@@ -256,8 +170,4 @@ export default {
   products: productService,
   users: userService,
   orders: orderService,
-  cart: cartService,
-  categories: categoryService,
-  files: fileService,
-  analytics: analyticsService,
 };
