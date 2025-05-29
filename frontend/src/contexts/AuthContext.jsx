@@ -23,6 +23,11 @@ export const AuthProvider = ({ children }) => {
       try {
         // Check if user is authenticated based on token validity
         const authenticated = authService.isAuthenticated();
+
+        if (import.meta.env.DEV) {
+          console.log('🔐 [Auth Init] Authentication status:', authenticated);
+        }
+
         setIsAuthenticated(authenticated);
 
         if (authenticated) {
@@ -30,14 +35,24 @@ export const AuthProvider = ({ children }) => {
           const userData = authService.getCurrentUserData();
           setUser(userData);
 
+          if (import.meta.env.DEV) {
+            console.log('👤 [Auth Init] User data from storage:', userData);
+          }
+
           // Optionally fetch fresh user data from server
           // This is useful to ensure user data is up-to-date
           authService.getCurrentUser()
             .then(response => {
-              setUser(response.user || response);
+              const freshUserData = response.user || response;
+              setUser(freshUserData);
+
               // Update stored user data
               const rememberMe = !!localStorage.getItem('authToken');
-              tokenManager.setUserData(response.user || response, rememberMe);
+              tokenManager.setUserData(freshUserData, rememberMe);
+
+              if (import.meta.env.DEV) {
+                console.log('👤 [Auth Init] Fresh user data from server:', freshUserData);
+              }
             })
             .catch(error => {
               console.warn('Failed to fetch current user:', error);
@@ -62,16 +77,32 @@ export const AuthProvider = ({ children }) => {
   const login = async (credentials, rememberMe = false) => {
     try {
       setIsLoading(true);
+
+      if (import.meta.env.DEV) {
+        console.log('🔐 [Auth Login] Attempting login...');
+      }
+
       const response = await authService.login(credentials, rememberMe);
 
       if (response.token) {
+        const userData = response.user || response;
+
         setIsAuthenticated(true);
-        setUser(response.user || response);
+        setUser(userData);
+
+        if (import.meta.env.DEV) {
+          console.log('✅ [Auth Login] Login successful:', { user: userData, hasToken: !!response.token });
+        }
+
         return response;
       }
 
       throw new Error('Login failed - no token received');
     } catch (error) {
+      if (import.meta.env.DEV) {
+        console.error('❌ [Auth Login] Login failed:', error);
+      }
+
       setIsAuthenticated(false);
       setUser(null);
       throw error;
@@ -83,16 +114,32 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData, rememberMe = false) => {
     try {
       setIsLoading(true);
+
+      if (import.meta.env.DEV) {
+        console.log('🔐 [Auth Register] Attempting registration...');
+      }
+
       const response = await authService.register(userData, rememberMe);
 
       if (response.token) {
+        const newUserData = response.user || response;
+
         setIsAuthenticated(true);
-        setUser(response.user || response);
+        setUser(newUserData);
+
+        if (import.meta.env.DEV) {
+          console.log('✅ [Auth Register] Registration successful:', { user: newUserData, hasToken: !!response.token });
+        }
+
         return response;
       }
 
       throw new Error('Registration failed - no token received');
     } catch (error) {
+      if (import.meta.env.DEV) {
+        console.error('❌ [Auth Register] Registration failed:', error);
+      }
+
       setIsAuthenticated(false);
       setUser(null);
       throw error;
@@ -104,7 +151,16 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       setIsLoading(true);
+
+      if (import.meta.env.DEV) {
+        console.log('🔐 [Auth Logout] Attempting logout...');
+      }
+
       await authService.logout();
+
+      if (import.meta.env.DEV) {
+        console.log('✅ [Auth Logout] Logout successful');
+      }
     } catch (error) {
       console.warn('Logout API call failed:', error);
       // Even if logout API fails, we should clear local state
@@ -121,6 +177,10 @@ export const AuthProvider = ({ children }) => {
     // Update stored user data
     const rememberMe = !!localStorage.getItem('authToken');
     tokenManager.setUserData(userData, rememberMe);
+
+    if (import.meta.env.DEV) {
+      console.log('👤 [Auth Update] User data updated:', userData);
+    }
   };
 
   const refreshAuth = async () => {
@@ -133,11 +193,12 @@ export const AuthProvider = ({ children }) => {
 
       // Fetch fresh user data
       const response = await authService.getCurrentUser();
-      setUser(response.user || response);
+      const freshUserData = response.user || response;
+      setUser(freshUserData);
 
       // Update stored user data
       const rememberMe = !!localStorage.getItem('authToken');
-      tokenManager.setUserData(response.user || response, rememberMe);
+      tokenManager.setUserData(freshUserData, rememberMe);
 
       return true;
     } catch (error) {
