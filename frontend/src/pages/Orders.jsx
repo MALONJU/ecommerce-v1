@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { orderService } from "../services/apiService";
 import ProductCard from "../components/ProductCard";
+import { orderService } from "../services/apiService";
 
 export default function Orders() {
   const [orders, setOrders] = useState([]);
@@ -44,17 +44,35 @@ export default function Orders() {
   const getStatusColor = (status) => {
     switch (status) {
       case "pending":
-        return "bg-yellow-100 text-yellow-800";
+        return {
+          backgroundColor: "yellow",
+          color: "black",
+        };
       case "processing":
-        return "bg-blue-100 text-blue-800";
+        return {
+          backgroundColor: "blue",
+          color: "black",
+        };
       case "shipped":
-        return "bg-purple-100 text-purple-800";
+        return {
+          backgroundColor: "purple",
+          color: "black",
+        };
       case "delivered":
-        return "bg-green-100 text-green-800";
+        return {
+          backgroundColor: "green",
+          color: "black",
+        };
       case "cancelled":
-        return "bg-red-100 text-red-800";
+        return {
+          backgroundColor: "red",
+          color: "black",
+        };
       default:
-        return "bg-gray-100 text-gray-800";
+        return {
+          backgroundColor: "gray",
+          color: "black",
+        };
     }
   };
 
@@ -134,16 +152,42 @@ export default function Orders() {
                         {new Date(order.createdAt).toLocaleDateString()}
                       </p>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns: "1fr 1fr",
+                        alignItems: "center",
+                        gap: "1rem",
+                        padding: "0.5rem",
+                        borderRadius: "0.5rem",
+                        fontSize: "0.8rem",
+                        fontWeight: "500",
+                        color: "black",
+                      }}
+                    >
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                          order.status
-                        )}`}
+                        style={{
+                          paddingLeft: "1rem",
+                          paddingRight: "1rem",
+                          paddingTop: "0.5rem",
+                          paddingBottom: "0.5rem",
+                          borderRadius: "0.5rem",
+                          fontSize: "0.8rem",
+                          fontWeight: "500",
+                          color: "black",
+                          ...getStatusColor(order.status),
+                        }}
                       >
                         {order.status.charAt(0).toUpperCase() +
                           order.status.slice(1)}
                       </span>
-                      <span className="text-lg font-bold text-gray-900">
+                      <span
+                        style={{
+                          fontSize: "1rem",
+                          fontWeight: "bold",
+                          color: "black",
+                        }}
+                      >
                         ${order.totalAmount}
                       </span>
                     </div>
