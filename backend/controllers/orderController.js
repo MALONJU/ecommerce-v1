@@ -9,22 +9,28 @@ const createOrder = async (req, res) => {
         const { items, totalAmount, shippingAddress } = req.body;
 
         // Verify stock availability and update product stock
-        for (const item of items) {
-            const product = await Product.findById(item.product);
+        // Fetch all products concurrently
+        const products = await Promise.all(items.map(item => Product.findById(item.product)));
+
+        // Validate stock availability
+        for (let i = 0; i < items.length; i++) {
+            const product = products[i];
             if (!product) {
                 return res.status(404).json({ 
-                    message: `Product not found: ${item.product}` 
+                    message: `Product not found: ${items[i].product}` 
                 });
             }
-            if (product.stock < item.quantity) {
+            if (product.stock < items[i].quantity) {
                 return res.status(400).json({ 
                     message: `Insufficient stock for product: ${product.name}` 
                 });
             }
             // Decrease stock
-            product.stock -= item.quantity;
-            await product.save();
+            product.stock -= items[i].quantity;
         }
+
+        // Save all updated products concurrently
+        await Promise.all(products.map(product => product.save()));
 
         const order = await Order.create({
             user: req.user._id,
