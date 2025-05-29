@@ -119,12 +119,12 @@ export default function Orders() {
             <p className="text-gray-400 mb-6">
               You haven't placed any orders yet.
             </p>
-            <a
-              href="/shop"
+            <Link
+              to="/shop"
               className="inline-block bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
             >
               Start Shopping
-            </a>
+            </Link>
           </div>
         ) : (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(400px, 1fr))", gap: "1.5rem" }}>
