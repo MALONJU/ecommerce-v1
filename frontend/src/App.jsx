@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
+import Navbar from './components/Navbar.jsx';
 import LoginForm from './components/LoginForm.jsx';
 import RegisterForm from './components/RegisterForm.jsx';
 import './App.css';
@@ -24,6 +25,9 @@ function App() {
     <AuthProvider>
       <Router>
         <div className="App">
+          {/* Navbar - will only show when authenticated and not on login/register */}
+          <Navbar />
+
           <Routes>
             {/* Public routes */}
             <Route path="/login" element={<LoginForm />} />
