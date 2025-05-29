@@ -32,7 +32,7 @@ const LoginForm = () => {
       );
 
       // Check if user was trying to access a protected route before login
-      const from = location.state?.from?.pathname || '/dashboard';
+      const from = location.state?.from?.pathname || '/shop';
       navigate(from, { replace: true });
 
     } catch (error) {

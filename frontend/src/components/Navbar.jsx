@@ -61,7 +61,7 @@ const Navbar = () => {
     <nav className="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
       <div className="container">
         {/* Brand */}
-        <Link className="navbar-brand fw-bold" to="/dashboard">
+        <Link className="navbar-brand fw-bold" to="/shop">
           <i className="bi bi-shop me-2"></i>
           E-Commerce
         </Link>
@@ -83,12 +83,6 @@ const Navbar = () => {
         <div className="collapse navbar-collapse" id="navbarNav">
           {/* Left side navigation */}
           <ul className="navbar-nav me-auto">
-            <li className="nav-item">
-              <Link className={isActiveRoute('/dashboard')} to="/dashboard">
-                <i className="bi bi-speedometer2 me-1"></i>
-                Dashboard
-              </Link>
-            </li>
             <li className="nav-item">
               <Link className={isActiveRoute('/shop')} to="/shop">
                 <i className="bi bi-shop me-1"></i>

@@ -15,7 +15,6 @@ import './App.css';
 import Products from './pages/Products.jsx';
 
 // Example components (you may need to create these)
-const Dashboard = () => <div className="container mt-4"><h1>Dashboard</h1></div>;
 const Unauthorized = () => (
   <div className="container mt-4">
     <div className="alert alert-danger">
@@ -38,16 +37,6 @@ function App() {
             <Route path="/login" element={<LoginForm />} />
             <Route path="/register" element={<RegisterForm />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
-
-            {/* Protected routes */}
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              }
-            />
 
             {/* Shop route - accessible to all authenticated users */}
             <Route
@@ -111,7 +100,7 @@ function App() {
             />
 
             {/* Default redirect */}
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/" element={<Navigate to="/shop" replace />} />
 
             {/* Catch all route */}
             <Route

@@ -46,8 +46,8 @@ const RegisterForm = () => {
       // Use AuthContext register method to properly update auth state
       await register(userData, values.rememberMe);
 
-      // Redirect to dashboard after successful registration
-      navigate('/dashboard', { replace: true });
+      // Redirect to shop after successful registration
+      navigate('/shop', { replace: true });
 
       resetForm();
       console.log('Inscription réussie');
