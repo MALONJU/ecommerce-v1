@@ -16,13 +16,13 @@ const createOrder = async (req, res) => {
         for (let i = 0; i < items.length; i++) {
             const product = products[i];
             if (!product) {
-                return res.status(404).json({ 
-                    message: `Product not found: ${items[i].product}` 
+                return res.status(404).json({
+                    message: `Product not found: ${items[i].product}`
                 });
             }
             if (product.stock < items[i].quantity) {
-                return res.status(400).json({ 
-                    message: `Insufficient stock for product: ${product.name}` 
+                return res.status(400).json({
+                    message: `Insufficient stock for product: ${product.name}`
                 });
             }
             // Decrease stock
@@ -102,10 +102,10 @@ const getOrderById = async (req, res) => {
         }
 
         // Check if the user is authorized to view this order
-        if (order.user._id.toString() !== req.user._id.toString() && 
+        if (order.user._id.toString() !== req.user._id.toString() &&
             req.user.role !== 'admin') {
-            return res.status(401).json({ 
-                message: 'Not authorized to view this order' 
+            return res.status(401).json({
+                message: 'Not authorized to view this order'
             });
         }
 
@@ -161,24 +161,24 @@ const cancelOrder = async (req, res) => {
         }
 
         // Check if the user is authorized to cancel this order
-        if (order.user.toString() !== req.user._id.toString() && 
+        if (order.user.toString() !== req.user._id.toString() &&
             req.user.role !== 'admin') {
-            return res.status(401).json({ 
-                message: 'Not authorized to cancel this order' 
+            return res.status(401).json({
+                message: 'Not authorized to cancel this order'
             });
         }
 
         // Only allow cancellation if order is pending
         if (order.status !== 'pending') {
-            return res.status(400).json({ 
-                message: 'Order cannot be cancelled in current status' 
+            return res.status(400).json({
+                message: 'Order cannot be cancelled in current status'
             });
         }
 
         // Add cancellation to history
         order.history.push({
             status: 'cancelled',
-            comment: req.body.comment || 'Order cancelled by user',
+            comment: (req.body && req.body.comment) || 'Order cancelled by user',
             updatedBy: req.user._id
         });
 
@@ -213,10 +213,10 @@ const getOrderHistory = async (req, res) => {
         }
 
         // Check authorization
-        if (order.user.toString() !== req.user._id.toString() && 
+        if (order.user.toString() !== req.user._id.toString() &&
             req.user.role !== 'admin') {
-            return res.status(401).json({ 
-                message: 'Not authorized to view this order history' 
+            return res.status(401).json({
+                message: 'Not authorized to view this order history'
             });
         }
 
@@ -264,4 +264,4 @@ module.exports = {
     cancelOrder,
     getOrderHistory,
     addHistoryComment
-}; 
+};
