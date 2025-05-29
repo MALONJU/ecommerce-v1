@@ -5,24 +5,28 @@ const {
     getUserById,
     updateUser,
     deleteUser,
-    updateUserRole
+    updateUserRole,
+    getProfile,
+    updateProfile,
+    changePassword
 } = require('../controllers/userController');
 const { protect, admin } = require('../middleware/auth');
 
-// All routes are protected and require admin role
-router.use(protect);
-router.use(admin);
+// Profile routes for authenticated users
+router.get('/profile', protect, getProfile);
+router.put('/profile', protect, updateProfile);
+router.put('/change-password', protect, changePassword);
 
-// Admin routes
+// Admin routes - require both protect and admin middleware
 router.route('/')
-    .get(getUsers);
+    .get(protect, admin, getUsers);
 
 router.route('/:id')
-    .get(getUserById)
-    .put(updateUser)
-    .delete(deleteUser);
+    .get(protect, admin, getUserById)
+    .put(protect, admin, updateUser)
+    .delete(protect, admin, deleteUser);
 
 router.route('/:id/role')
-    .put(updateUserRole);
+    .put(protect, admin, updateUserRole);
 
 module.exports = router;
