@@ -95,7 +95,7 @@ const UserManagement = () => {
                 className="btn btn-primary"
                 onClick={fetchUsers}
               >
-                <i className="fas fa-sync-alt me-2"></i>
+                <i className="bi bi-arrow-clockwise me-2"></i>
                 Refresh
               </button>
             </div>
@@ -140,14 +140,14 @@ const UserManagement = () => {
                               onClick={() => handleEditUser(user)}
                               title="Edit User"
                             >
-                              <i className="fas fa-edit"></i>
+                              <i className="bi bi-pencil"></i>
                             </button>
                             <button
                               className="btn btn-outline-danger btn-sm"
                               onClick={() => setDeleteConfirm(user)}
                               title="Delete User"
                             >
-                              <i className="fas fa-trash"></i>
+                              <i className="bi bi-trash"></i>
                             </button>
                           </div>
                         </td>
