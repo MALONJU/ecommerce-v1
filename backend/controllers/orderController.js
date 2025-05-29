@@ -185,14 +185,22 @@ const cancelOrder = async (req, res) => {
         order.status = 'cancelled';
         await order.save();
 
-        // Restore product stock
-        for (const item of order.items) {
-            const product = await Product.findById(item.product);
+        // Fetch all products concurrently
+        const products = await Promise.all(
+            order.items.map(item => Product.findById(item.product))
+        );
+
+        // Update stock for all fetched products
+        products.forEach((product, index) => {
             if (product) {
-                product.stock += item.quantity;
-                await product.save();
+                product.stock += order.items[index].quantity;
             }
-        }
+        });
+
+        // Save all updated products concurrently
+        await Promise.all(
+            products.filter(product => product !== null).map(product => product.save())
+        );
 
         res.json({ message: 'Order cancelled successfully' });
     } catch (error) {
