@@ -96,6 +96,12 @@ const Navbar = () => {
               </Link>
             </li>
             <li className="nav-item">
+              <Link className={isActiveRoute('/orders')} to="/orders">
+                <i className="bi bi-bag-check me-1"></i>
+                My Orders
+              </Link>
+            </li>
+            <li className="nav-item">
               <Link className={isActiveRoute('/products')} to="/products">
                 <i className="bi bi-box-seam me-1"></i>
                 Products
