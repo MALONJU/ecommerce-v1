@@ -109,32 +109,10 @@ export const productService = {
   deleteProduct: async (id) => {
     return await apiClient.delete(`/products/${id}`);
   },
-
-  searchProducts: async (query, filters = {}) => {
-    return await apiClient.get("/products/search", {
-      params: { q: query, ...filters },
-    });
-  },
 };
 
 // User Services
 export const userService = {
-  getProfile: async () => {
-    return await apiClient.get("/users/profile");
-  },
-
-  updateProfile: async (profileData) => {
-    return await apiClient.put("/users/profile", profileData);
-  },
-
-  changePassword: async (passwordData) => {
-    return await apiClient.put("/users/change-password", passwordData);
-  },
-
-  uploadAvatar: async (file, onProgress) => {
-    return await apiClient.upload("/users/avatar", file, onProgress);
-  },
-
   // Admin User Management Services
   getAllUsers: async () => {
     return await apiClient.get("/users");
@@ -186,86 +164,10 @@ export const orderService = {
   },
 };
 
-// Cart Services
-export const cartService = {
-  getCart: async () => {
-    return await apiClient.get("/cart");
-  },
-
-  addToCart: async (productId, quantity = 1) => {
-    return await apiClient.post("/cart/items", { productId, quantity });
-  },
-
-  updateCartItem: async (itemId, quantity) => {
-    return await apiClient.put(`/cart/items/${itemId}`, { quantity });
-  },
-
-  removeFromCart: async (itemId) => {
-    return await apiClient.delete(`/cart/items/${itemId}`);
-  },
-
-  clearCart: async () => {
-    return await apiClient.delete("/cart");
-  },
-};
-
-// Category Services
-export const categoryService = {
-  getCategories: async () => {
-    return await apiClient.get("/categories");
-  },
-
-  getCategory: async (id) => {
-    return await apiClient.get(`/categories/${id}`);
-  },
-
-  createCategory: async (categoryData) => {
-    return await apiClient.post("/categories", categoryData);
-  },
-
-  updateCategory: async (id, categoryData) => {
-    return await apiClient.put(`/categories/${id}`, categoryData);
-  },
-
-  deleteCategory: async (id) => {
-    return await apiClient.delete(`/categories/${id}`);
-  },
-};
-
-// File Services
-export const fileService = {
-  uploadImage: async (file, onProgress) => {
-    return await apiClient.upload("/files/upload", file, onProgress);
-  },
-
-  downloadFile: async (fileId, filename) => {
-    return await apiClient.download(`/files/${fileId}`, filename);
-  },
-};
-
-// Analytics Services
-export const analyticsService = {
-  getDashboardStats: async () => {
-    return await apiClient.get("/analytics/dashboard");
-  },
-
-  getSalesReport: async (dateRange) => {
-    return await apiClient.get("/analytics/sales", { params: dateRange });
-  },
-
-  getProductAnalytics: async (productId) => {
-    return await apiClient.get(`/analytics/products/${productId}`);
-  },
-};
-
 // Export all services as a single object for easier imports
 export default {
   auth: authService,
   products: productService,
   users: userService,
   orders: orderService,
-  cart: cartService,
-  categories: categoryService,
-  files: fileService,
-  analytics: analyticsService,
 };

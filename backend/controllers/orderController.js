@@ -200,68 +200,11 @@ const cancelOrder = async (req, res) => {
     }
 };
 
-// @desc    Get order history
-// @route   GET /api/orders/:id/history
-// @access  Private
-const getOrderHistory = async (req, res) => {
-    try {
-        const order = await Order.findById(req.params.id)
-            .populate('history.updatedBy', 'name email');
-
-        if (!order) {
-            return res.status(404).json({ message: 'Order not found' });
-        }
-
-        // Check authorization
-        if (order.user.toString() !== req.user._id.toString() &&
-            req.user.role !== 'admin') {
-            return res.status(401).json({
-                message: 'Not authorized to view this order history'
-            });
-        }
-
-        res.json(order.history);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-// @desc    Add history comment
-// @route   POST /api/orders/:id/history
-// @access  Private/Admin
-const addHistoryComment = async (req, res) => {
-    try {
-        const { comment } = req.body;
-        const order = await Order.findById(req.params.id);
-
-        if (!order) {
-            return res.status(404).json({ message: 'Order not found' });
-        }
-
-        order.history.push({
-            status: order.status,
-            comment,
-            updatedBy: req.user._id
-        });
-
-        await order.save();
-
-        const updatedOrder = await Order.findById(order._id)
-            .populate('history.updatedBy', 'name email');
-
-        res.json(updatedOrder.history);
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
-};
-
 module.exports = {
     createOrder,
     getOrders,
     getMyOrders,
     getOrderById,
     updateOrderStatus,
-    cancelOrder,
-    getOrderHistory,
-    addHistoryComment
+    cancelOrder
 };

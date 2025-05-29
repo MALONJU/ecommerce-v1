@@ -15,7 +15,6 @@ import Products from './pages/Products.jsx';
 
 // Example components (you may need to create these)
 const Dashboard = () => <div className="container mt-4"><h1>Dashboard</h1></div>;
-const Profile = () => <div className="container mt-4"><h1>Profile</h1></div>;
 const Unauthorized = () => (
   <div className="container mt-4">
     <div className="alert alert-danger">
@@ -74,15 +73,6 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Products />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute>
-                  <Profile />
                 </ProtectedRoute>
               }
             />

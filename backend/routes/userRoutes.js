@@ -5,17 +5,9 @@ const {
     getUserById,
     updateUser,
     deleteUser,
-    updateUserRole,
-    getProfile,
-    updateProfile,
-    changePassword
+    updateUserRole
 } = require('../controllers/userController');
 const { protect, admin } = require('../middleware/auth');
-
-// Profile routes for authenticated users
-router.get('/profile', protect, getProfile);
-router.put('/profile', protect, updateProfile);
-router.put('/change-password', protect, changePassword);
 
 // Apply protect and admin middleware to all routes below this point
 router.use(protect, admin);

@@ -107,12 +107,6 @@ const Navbar = () => {
                 Products
               </Link>
             </li>
-            <li className="nav-item">
-              <Link className={isActiveRoute('/profile')} to="/profile">
-                <i className="bi bi-person me-1"></i>
-                Profile
-              </Link>
-            </li>
 
             {/* Admin link - only show if user has admin role */}
             {getUserRole().toLowerCase().includes('admin') && (
@@ -196,12 +190,6 @@ const Navbar = () => {
                   </div>
                 </li>
                 <li><hr className="dropdown-divider" /></li>
-                <li>
-                  <Link className="dropdown-item" to="/profile">
-                    <i className="bi bi-person me-2"></i>
-                    My Profile
-                  </Link>
-                </li>
                 <li>
                   <a className="dropdown-item" href="#" onClick={(e) => { e.preventDefault(); /* Add settings modal */ }}>
                     <i className="bi bi-gear me-2"></i>
