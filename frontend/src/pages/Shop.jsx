@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { productService } from "../services/apiService";
+import { productService, orderService } from "../services/apiService";
+import ProductCard from "../components/ProductCard";
 
 export default function Shop() {
   const [products, setProducts] = useState([]);
@@ -8,6 +9,7 @@ export default function Shop() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [sortBy, setSortBy] = useState("name");
+  const [orderLoading, setOrderLoading] = useState(false);
 
   // Load products on component mount
   useEffect(() => {
@@ -52,11 +54,47 @@ export default function Shop() {
   // Get unique categories for filter
   const categories = [...new Set(products.map((product) => product.category))];
 
-  const handleOrderClick = (product) => {
-    // Placeholder for order functionality
-    alert(
-      `Order functionality will be implemented soon!\nProduct: ${product.name}\nPrice: $${product.price}`
+  const handleOrderClick = async (product) => {
+    // Show confirmation dialog
+    const confirmOrder = window.confirm(
+      `Add "${product.name}" to your cart?\nPrice: $${product.price}\n\nThis will create an order for this item.`
     );
+
+    if (!confirmOrder) return;
+
+    try {
+      setOrderLoading(true);
+
+      // Create order with the selected product
+      const orderData = {
+        items: [
+          {
+            product: product._id,
+            quantity: 1
+          }
+        ],
+        totalAmount: product.price,
+        shippingAddress: {
+          address: "Default Address", // You can implement address selection later
+          city: "Default City",
+          postalCode: "12345",
+          country: "US"
+        }
+      };
+
+      await orderService.createOrder(orderData);
+
+      alert(`Order created successfully!\nProduct: ${product.name}\nPrice: $${product.price}`);
+
+      // Refresh products to update stock
+      fetchProducts();
+
+    } catch (error) {
+      console.error('Error creating order:', error);
+      alert('Failed to create order. Please try again.');
+    } finally {
+      setOrderLoading(false);
+    }
   };
 
   if (loading) {
@@ -179,6 +217,13 @@ export default function Shop() {
           </div>
         </div>
 
+        {/* Order Loading Indicator */}
+        {orderLoading && (
+          <div className="fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg">
+            Creating order...
+          </div>
+        )}
+
         {/* Products Grid */}
         {filteredProducts.length === 0 ? (
           <div className="text-center py-12">
@@ -202,64 +247,15 @@ export default function Shop() {
                 padding: "1rem",
               }}
             >
-              {filteredProducts.map((product) => {
-                return (
-                  <div
-                    key={product._id}
-                    style={{
-                      padding: "1rem",
-                      border: "1px solid #e0e0e0",
-                      borderRadius: "0.5rem",
-                      position: "relative",
-                      backgroundColor: "#f9fafb",
-                    }}
-                  >
-                    {/* Product Image */}
-                    <div className="aspect-square bg-gray-100 flex items-center justify-center mb-4 p-4">
-                      {product.imageUrl ? (
-                        <img
-                          src={product.imageUrl}
-                          alt={product.name}
-                          className="w-full h-full object-contain"
-                        />
-                      ) : (
-                        <div className="text-gray-400 text-sm font-medium">
-                          noimage
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Product Info */}
-                    <div className="text-center">
-                      <h3 className="font-medium text-gray-900 mb-2 uppercase tracking-wide text-sm">
-                        {product.name}
-                      </h3>
-
-                      <p className="text-gray-600 text-xs mb-3 line-height-relaxed">
-                        {product.description}
-                      </p>
-
-                      {/* Price */}
-                      <div className="flex items-center justify-center gap-2 mb-4">
-                        <span className="font-bold text-lg">
-                          ${product.price}
-                        </span>
-                      </div>
-
-                      {/* Stock Status */}
-                      {product.stock === 0 ? (
-                        <button className="text-red-600 text-sm font-medium mb-2 cursor-not-allowed">
-                          Out of stock
-                        </button>
-                      ) : (
-                        <button onClick={() => handleOrderClick(product)}>
-                          Add to Cart
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
+              {filteredProducts.map((product) => (
+                <ProductCard
+                  key={product._id}
+                  product={product}
+                  onOrderClick={handleOrderClick}
+                  showOrderButton={true}
+                  isOrderView={false}
+                />
+              ))}
             </div>
           </div>
         )}
