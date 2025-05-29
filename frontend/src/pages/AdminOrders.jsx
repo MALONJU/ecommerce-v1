@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
-import OrderStatusModal from "../components/OrderStatusModal";
-import ProductCard from "../components/ProductCard";
 import { orderService } from "../services/apiService";
+import OrderStatusModal from "../components/OrderStatusModal";
 
 export default function AdminOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [filterStatus, setFilterStatus] = useState("all");
 
   useEffect(() => {
@@ -18,7 +17,7 @@ export default function AdminOrders() {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const data = await orderService.getOrders(); // Admin endpoint - gets all orders
+      const data = await orderService.getOrders();
       setOrders(data);
     } catch (error) {
       setError("Failed to load orders");
@@ -30,49 +29,49 @@ export default function AdminOrders() {
 
   const handleOrderClick = (order) => {
     setSelectedOrder(order);
-    setIsModalOpen(true);
+    setShowModal(true);
   };
 
   const handleCloseModal = () => {
-    setIsModalOpen(false);
+    setShowModal(false);
     setSelectedOrder(null);
   };
 
   const handleOrderUpdated = () => {
-    fetchOrders(); // Refresh orders after update
+    fetchOrders(); // Refresh the orders list
   };
 
   const getStatusColor = (status) => {
     switch (status) {
       case "pending":
         return {
-          backgroundColor: "yellow",
-          color: "black",
+          backgroundColor: "#f59e0b",
+          color: "white",
         };
       case "processing":
         return {
-          backgroundColor: "blue",
-          color: "black",
+          backgroundColor: "#3b82f6",
+          color: "white",
         };
       case "shipped":
         return {
-          backgroundColor: "purple",
-          color: "black",
+          backgroundColor: "#8b5cf6",
+          color: "white",
         };
       case "delivered":
         return {
-          backgroundColor: "green",
-          color: "black",
+          backgroundColor: "#10b981",
+          color: "white",
         };
       case "cancelled":
         return {
-          backgroundColor: "red",
-          color: "black",
+          backgroundColor: "#ef4444",
+          color: "white",
         };
       default:
         return {
-          backgroundColor: "gray",
-          color: "black",
+          backgroundColor: "#6b7280",
+          color: "white",
         };
     }
   };
@@ -117,7 +116,7 @@ export default function AdminOrders() {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Order Management
           </h1>
@@ -131,11 +130,17 @@ export default function AdminOrders() {
           </span>
           <button
             onClick={() => setFilterStatus("all")}
-            className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-              filterStatus === "all"
-                ? "bg-gray-900 text-white"
-                : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
-            }`}
+            style={{
+              padding: "0.25rem 0.75rem",
+              borderRadius: "9999px",
+              fontSize: "0.75rem",
+              fontWeight: "500",
+              transition: "all 0.2s ease",
+              border: filterStatus === "all" ? "none" : "1px solid var(--mongodb-gray-400)",
+              backgroundColor: filterStatus === "all" ? "var(--mongodb-gray-900)" : "white",
+              color: filterStatus === "all" ? "white" : "var(--mongodb-gray-700)",
+              cursor: "pointer"
+            }}
           >
             All ({orders.length})
           </button>
@@ -143,11 +148,18 @@ export default function AdminOrders() {
             <button
               key={status}
               onClick={() => setFilterStatus(status)}
-              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors capitalize ${
-                filterStatus === status
-                  ? "bg-gray-900 text-white"
-                  : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
-              }`}
+              style={{
+                padding: "0.25rem 0.75rem",
+                borderRadius: "9999px",
+                fontSize: "0.75rem",
+                fontWeight: "500",
+                transition: "all 0.2s ease",
+                textTransform: "capitalize",
+                border: filterStatus === status ? "none" : "1px solid var(--mongodb-gray-400)",
+                backgroundColor: filterStatus === status ? "var(--mongodb-gray-900)" : "white",
+                color: filterStatus === status ? "white" : "var(--mongodb-gray-700)",
+                cursor: "pointer"
+              }}
             >
               {status} (
               {orders.filter((order) => order.status === status).length})
@@ -162,27 +174,8 @@ export default function AdminOrders() {
 
         {/* Orders List */}
         {filteredOrders.length === 0 ? (
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              height: "100%",
-              width: "100%",
-              textAlign: "center",
-              paddingTop: "12rem",
-              paddingBottom: "12rem",
-              paddingLeft: "1rem",
-            }}
-          >
-            <div
-              style={{
-                color: "gray",
-                fontSize: "1.2rem",
-                marginBottom: "1rem",
-              }}
-            >
+          <div className="text-center py-12">
+            <div className="text-gray-500 text-lg mb-4">
               {filterStatus === "all"
                 ? "No orders found"
                 : `No ${filterStatus} orders found`}
@@ -190,80 +183,35 @@ export default function AdminOrders() {
             {filterStatus !== "all" && (
               <button
                 onClick={() => setFilterStatus("all")}
-                style={{
-                  color: "green",
-                  hover: {
-                    color: "green",
-                  },
-                }}
+                className="text-green-600 hover:text-green-800"
               >
                 Show all orders
               </button>
             )}
           </div>
         ) : (
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "1rem",
-            }}
-          >
+          <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
             {filteredOrders.map((order) => (
               <div
                 key={order._id}
                 onClick={() => handleOrderClick(order)}
-                style={{
-                  backgroundColor: "white",
-                  borderRadius: "1rem",
-                  boxShadow: "0 0 10px 0 rgba(0, 0, 0, 0.1)",
-                  overflow: "hidden",
-                  cursor: "pointer",
-                  transition: "all 0.3s ease",
-                  hover: {
-                    boxShadow: "0 0 10px 0 rgba(0, 0, 0, 0.2)",
-                  },
+                className="bg-white rounded-lg shadow-md overflow-hidden"
+                style={{ cursor: "pointer", transition: "all 0.3s ease" }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow = "0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)";
                 }}
               >
                 {/* Order Header */}
-                <div
-                  style={{
-                    paddingLeft: "1rem",
-                    paddingRight: "1rem",
-                    paddingTop: "1rem",
-                    paddingBottom: "1rem",
-                    backgroundColor: "lightgrey",
-                    borderBottom: "1px solid #e0e0e0",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <div
-                      style={{
-                        marginBottom: "1rem",
-                      }}
-                    >
-                      <h3
-                        style={{
-                          fontSize: "1.2rem",
-                          fontWeight: "500",
-                          color: "black",
-                        }}
-                      >
+                <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
+                  <div className="flex flex-col md:flex-row md:justify-between">
+                    <div className="mb-2 md:mb-0">
+                      <h3 className="text-lg font-semibold text-gray-900">
                         Order #{order._id.slice(-8).toUpperCase()}
                       </h3>
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "1rem",
-                        }}
-                      >
+                      <div className="flex items-center gap-4 text-sm text-gray-600">
                         <span>
                           Customer:{" "}
                           {order.user?.name || order.user?.email || "Unknown"}
@@ -274,88 +222,68 @@ export default function AdminOrders() {
                         </span>
                       </div>
                     </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "1rem",
-                      }}
-                    >
+                    <div className="flex items-center gap-3">
                       <span
                         style={{
-                          ...getStatusColor(order.status),
-                          padding: "0.5rem",
+                          padding: "0.5rem 1rem",
                           borderRadius: "0.5rem",
-                          fontSize: "0.8rem",
+                          fontSize: "0.875rem",
                           fontWeight: "500",
+                          textTransform: "capitalize",
+                          ...getStatusColor(order.status),
                         }}
                       >
-                        {order.status.charAt(0).toUpperCase() +
-                          order.status.slice(1)}
+                        {order.status}
                       </span>
-                      <span
-                        style={{
-                          fontSize: "1rem",
-                          fontWeight: "bold",
-                          color: "black",
-                        }}
-                      >
+                      <span className="text-lg font-bold text-gray-900">
                         ${order.totalAmount}
                       </span>
-                      <div
-                        style={{
-                          fontSize: "0.8rem",
-                          fontWeight: "500",
-                          color: "black",
-                        }}
-                      >
-                        Click to update →
-                      </div>
                     </div>
                   </div>
                 </div>
 
                 {/* Order Items Preview */}
                 <div className="p-6">
-                  <h4 className="text-md font-medium text-gray-900 mb-4">
-                    Order Items ({order.items.length})
+                  <h4 className="text-lg font-medium text-gray-900 mb-4">
+                    Items ({order.items.length})
                   </h4>
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns:
-                        "repeat(auto-fit, minmax(200px, 1fr))",
-                      gap: "1rem",
-                      maxHeight: "300px",
-                      overflowY: "auto",
-                    }}
-                  >
-                    {order.items.map((item, index) => (
-                      <ProductCard
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1rem" }}>
+                    {order.items.slice(0, 3).map((item, index) => (
+                      <div
                         key={index}
-                        product={item.product}
-                        showOrderButton={false}
-                        isOrderView={true}
-                        quantity={item.quantity}
-                      />
+                        className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg"
+                      >
+                        <div className="flex-1">
+                          <h5 className="font-medium text-gray-900">
+                            {item.product?.name || "Product"}
+                          </h5>
+                          <p className="text-sm text-gray-600">
+                            Qty: {item.quantity} × ${item.product?.price || 0}
+                          </p>
+                        </div>
+                      </div>
                     ))}
+                    {order.items.length > 3 && (
+                      <div className="text-sm text-gray-500 text-center p-3">
+                        +{order.items.length - 3} more items
+                      </div>
+                    )}
                   </div>
                 </div>
 
-                {/* Order Details */}
+                {/* Order Footer */}
                 <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between text-sm text-gray-600">
                     <div>
                       {order.shippingAddress && (
                         <span>
-                          Shipping to: {order.shippingAddress.address},{" "}
+                          Shipping: {order.shippingAddress.address},{" "}
                           {order.shippingAddress.city}
                         </span>
                       )}
                     </div>
                     <div className="flex items-center gap-4 mt-2 md:mt-0">
-                      <span>Payment: {order.paymentStatus || "Pending"}</span>
-                      <span>Method: {order.paymentMethod || "Card"}</span>
+                      <span>Click to manage order</span>
                     </div>
                   </div>
                 </div>
@@ -363,15 +291,16 @@ export default function AdminOrders() {
             ))}
           </div>
         )}
+      </div>
 
-        {/* Order Status Modal */}
+      {/* Order Status Modal */}
+      {showModal && selectedOrder && (
         <OrderStatusModal
           order={selectedOrder}
-          isOpen={isModalOpen}
           onClose={handleCloseModal}
           onOrderUpdated={handleOrderUpdated}
         />
-      </div>
+      )}
     </div>
   );
 }

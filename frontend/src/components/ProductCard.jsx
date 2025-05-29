@@ -8,15 +8,7 @@ const ProductCard = ({
   quantity = null,
 }) => {
   return (
-    <div
-      style={{
-        padding: "1rem",
-        border: "1px solid #e0e0e0",
-        borderRadius: "0.5rem",
-        position: "relative",
-        backgroundColor: "#f9fafb",
-      }}
-    >
+    <div className="product-card">
       {/* Product Image */}
       <div className="aspect-square bg-gray-100 flex items-center justify-center mb-4 p-4">
         {product.imageUrl ? (

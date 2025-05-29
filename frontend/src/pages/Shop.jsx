@@ -133,17 +133,15 @@ export default function Shop() {
             onClick={() => setSelectedCategory("all")}
             style={{
               padding: "0.5rem 1rem",
-              borderRadius: "0.5rem",
-              fontSize: "0.8rem",
+              borderRadius: "9999px",
+              fontSize: "0.875rem",
               fontWeight: "500",
               transition: "all 0.3s ease",
-              color: "black",
+              border: selectedCategory === "all" ? "none" : "1px solid var(--mongodb-gray-400)",
+              backgroundColor: selectedCategory === "all" ? "var(--mongodb-gray-900)" : "white",
+              color: selectedCategory === "all" ? "white" : "var(--mongodb-gray-700)",
+              cursor: "pointer"
             }}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-              selectedCategory === "all"
-                ? "bg-gray-900 text-white"
-                : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
-            }`}
           >
             All categories
           </button>
@@ -153,17 +151,16 @@ export default function Shop() {
               onClick={() => setSelectedCategory(category)}
               style={{
                 padding: "0.5rem 1rem",
-                borderRadius: "0.5rem",
-                fontSize: "0.8rem",
+                borderRadius: "9999px",
+                fontSize: "0.875rem",
                 fontWeight: "500",
                 transition: "all 0.3s ease",
-                color: "black",
+                textTransform: "capitalize",
+                border: selectedCategory === category ? "none" : "1px solid var(--mongodb-gray-400)",
+                backgroundColor: selectedCategory === category ? "var(--mongodb-gray-900)" : "white",
+                color: selectedCategory === category ? "white" : "var(--mongodb-gray-700)",
+                cursor: "pointer"
               }}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors capitalize ${
-                selectedCategory === category
-                  ? "bg-gray-900 text-white"
-                  : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
-              }`}
             >
               {category}
             </button>
@@ -171,44 +168,28 @@ export default function Shop() {
         </div>
 
         {/* Controls Row */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "1rem",
-          }}
-        >
-          <div
-            style={{
-              fontSize: "0.8rem",
-              color: "#666",
-            }}
-          >
+        <div className="flex justify-between items-center mb-4">
+          <div className="text-sm text-gray-600">
             Showing {filteredProducts.length} of {products.length}
           </div>
 
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "1rem",
-            }}
-          >
+          <div className="flex items-center gap-4">
             {/* Search */}
             <input
               type="text"
               placeholder="Search products..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
+              className="form-control text-sm"
+              style={{ width: "200px" }}
             />
 
             {/* Sort */}
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
+              className="form-control text-sm"
+              style={{ width: "180px" }}
             >
               <option value="name">Sort by</option>
               <option value="price-low">Price: Low to High</option>
@@ -239,14 +220,7 @@ export default function Shop() {
           </div>
         ) : (
           <div className="bg-white border border-gray-200">
-            <div
-              style={{
-                gridTemplateColumns: "repeat(2, 1fr)",
-                display: "grid",
-                gap: "1rem",
-                padding: "1rem",
-              }}
-            >
+            <div className="products-grid p-4">
               {filteredProducts.map((product) => (
                 <ProductCard
                   key={product._id}

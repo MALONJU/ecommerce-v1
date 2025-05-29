@@ -14,7 +14,7 @@ export default function Orders() {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const data = await orderService.getMyOrders();
+      const data = await orderService.getOrders();
       setOrders(data);
     } catch (error) {
       setError("Failed to load orders");
@@ -25,19 +25,19 @@ export default function Orders() {
   };
 
   const handleCancelOrder = async (orderId) => {
-    const confirmCancel = window.confirm(
-      "Are you sure you want to cancel this order?"
-    );
-
-    if (!confirmCancel) return;
-
     try {
+      const confirmed = window.confirm(
+        "Are you sure you want to cancel this order?"
+      );
+      if (!confirmed) return;
+
       await orderService.cancelOrder(orderId);
-      alert("Order cancelled successfully!");
-      fetchOrders(); // Refresh orders
+      // Refresh orders after cancelling
+      fetchOrders();
+      alert("Order cancelled successfully");
     } catch (error) {
       console.error("Error cancelling order:", error);
-      alert("Failed to cancel order. Please try again.");
+      alert("Failed to cancel order");
     }
   };
 
@@ -45,7 +45,7 @@ export default function Orders() {
     switch (status) {
       case "pending":
         return {
-          backgroundColor: "yellow",
+          backgroundColor: "orange",
           color: "black",
         };
       case "processing":
@@ -107,7 +107,7 @@ export default function Orders() {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">My Orders</h1>
           <p className="text-gray-600">View and manage your order history</p>
         </div>
@@ -127,14 +127,7 @@ export default function Orders() {
             </a>
           </div>
         ) : (
-          <div
-            className="space-y-6"
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
-              gap: "1rem",
-            }}
-          >
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(400px, 1fr))", gap: "1.5rem" }}>
             {orders.map((order) => (
               <div
                 key={order._id}
@@ -152,42 +145,20 @@ export default function Orders() {
                         {new Date(order.createdAt).toLocaleDateString()}
                       </p>
                     </div>
-                    <div
-                      style={{
-                        display: "grid",
-                        gridTemplateColumns: "1fr 1fr",
-                        alignItems: "center",
-                        gap: "1rem",
-                        padding: "0.5rem",
-                        borderRadius: "0.5rem",
-                        fontSize: "0.8rem",
-                        fontWeight: "500",
-                        color: "black",
-                      }}
-                    >
+                    <div className="flex items-center gap-3">
                       <span
                         style={{
-                          paddingLeft: "1rem",
-                          paddingRight: "1rem",
-                          paddingTop: "0.5rem",
-                          paddingBottom: "0.5rem",
+                          padding: "0.5rem 1rem",
                           borderRadius: "0.5rem",
-                          fontSize: "0.8rem",
+                          fontSize: "0.875rem",
                           fontWeight: "500",
-                          color: "black",
                           ...getStatusColor(order.status),
                         }}
                       >
                         {order.status.charAt(0).toUpperCase() +
                           order.status.slice(1)}
                       </span>
-                      <span
-                        style={{
-                          fontSize: "1rem",
-                          fontWeight: "bold",
-                          color: "black",
-                        }}
-                      >
+                      <span className="text-lg font-bold text-gray-900">
                         ${order.totalAmount}
                       </span>
                     </div>
@@ -196,17 +167,10 @@ export default function Orders() {
 
                 {/* Order Items */}
                 <div className="p-6">
-                  <h4 className="text-md font-medium text-gray-900 mb-4">
+                  <h4 className="text-lg font-medium text-gray-900 mb-4">
                     Order Items
                   </h4>
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns:
-                        "repeat(auto-fit, minmax(250px, 1fr))",
-                      gap: "1rem",
-                    }}
-                  >
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1rem" }}>
                     {order.items.map((item, index) => (
                       <ProductCard
                         key={index}
@@ -234,7 +198,7 @@ export default function Orders() {
                       {order.status === "pending" && (
                         <button
                           onClick={() => handleCancelOrder(order._id)}
-                          className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm"
+                          className="btn-danger text-sm"
                         >
                           Cancel Order
                         </button>
