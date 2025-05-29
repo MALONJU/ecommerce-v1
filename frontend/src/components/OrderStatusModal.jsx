@@ -162,7 +162,7 @@ const OrderStatusModal = ({ order, isOpen, onClose, onOrderUpdated }) => {
                 fontSize: "0.875rem",
                 color: "#4b5563"
               }}>
-                ${order.totalAmount}
+                €{order.totalAmount}
               </span>
             </div>
             <div style={{

@@ -145,7 +145,7 @@ export default function ProductModal({ product, onClose, onRefresh }) {
                 <div className="col-md-6">
                   <div className="mb-3">
                     <label htmlFor="price" className="form-label">
-                      <i className="bi bi-currency-dollar me-1"></i>
+                      <i className="bi bi-currency-euro me-1"></i>
                       Price *
                     </label>
                     <input
