@@ -1,5 +1,4 @@
-import apiClient from "../utils/axiosConfig.js";
-import { tokenManager } from "../utils/axiosConfig.js";
+import apiClient, { tokenManager } from "../utils/axiosConfig.js";
 
 // Authentication Services
 export const authService = {
@@ -37,11 +36,14 @@ export const authService = {
     try {
       // Call logout endpoint to invalidate refresh token on server
       await apiClient.post("/auth/logout", {
-        refreshToken: tokenManager.getRefreshToken()
+        refreshToken: tokenManager.getRefreshToken(),
       });
     } catch (error) {
       // Even if logout endpoint fails, we should clear local tokens
-      console.warn('Logout endpoint failed, clearing local tokens anyway:', error);
+      console.warn(
+        "Logout endpoint failed, clearing local tokens anyway:",
+        error
+      );
     } finally {
       // Always clear local tokens
       tokenManager.clearTokens();
@@ -54,11 +56,11 @@ export const authService = {
     const tokenToUse = refreshToken || tokenManager.getRefreshToken();
 
     if (!tokenToUse) {
-      throw new Error('No refresh token available');
+      throw new Error("No refresh token available");
     }
 
     return await apiClient.post("/auth/refresh-token", {
-      refreshToken: tokenToUse
+      refreshToken: tokenToUse,
     });
   },
 
@@ -83,7 +85,7 @@ export const authService = {
     if (!token) return false;
 
     return !tokenManager.isTokenExpired(token);
-  }
+  },
 };
 
 // Product Services
@@ -132,6 +134,27 @@ export const userService = {
   uploadAvatar: async (file, onProgress) => {
     return await apiClient.upload("/users/avatar", file, onProgress);
   },
+
+  // Admin User Management Services
+  getAllUsers: async () => {
+    return await apiClient.get("/users");
+  },
+
+  getUserById: async (id) => {
+    return await apiClient.get(`/users/${id}`);
+  },
+
+  updateUser: async (id, userData) => {
+    return await apiClient.put(`/users/${id}`, userData);
+  },
+
+  deleteUser: async (id) => {
+    return await apiClient.delete(`/users/${id}`);
+  },
+
+  updateUserRole: async (id, role) => {
+    return await apiClient.put(`/users/${id}/role`, { role });
+  },
 };
 
 // Order Services
@@ -152,13 +175,13 @@ export const orderService = {
     return await apiClient.post("/orders", orderData);
   },
 
-  updateOrderStatus: async (id, status) => {
-    return await apiClient.patch(`/orders/${id}/status`, { status });
+  updateOrderStatus: async (id, statusData) => {
+    return await apiClient.put(`/orders/${id}/status`, statusData);
   },
 
   cancelOrder: async (id) => {
     return await apiClient.delete(`/orders/${id}`, {
-      data: { comment: 'Order cancelled by user' }
+      data: { comment: "Order cancelled by user" },
     });
   },
 };

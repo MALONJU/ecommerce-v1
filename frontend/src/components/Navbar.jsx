@@ -135,6 +135,12 @@ const Navbar = () => {
                     </Link>
                   </li>
                   <li>
+                    <Link className="dropdown-item" to="/admin/orders">
+                      <i className="bi bi-box-seam me-2"></i>
+                      Order Management
+                    </Link>
+                  </li>
+                  <li>
                     <Link className="dropdown-item" to="/admin/users">
                       <i className="bi bi-people me-2"></i>
                       User Management

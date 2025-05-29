@@ -7,6 +7,7 @@ import LoginForm from './components/LoginForm.jsx';
 import RegisterForm from './components/RegisterForm.jsx';
 import UserManagementPage from './pages/UserManagementPage.jsx';
 import AdminDashboard from './pages/AdminDashboard.jsx';
+import AdminOrders from './pages/AdminOrders.jsx';
 import Shop from './pages/Shop.jsx';
 import Orders from './pages/Orders.jsx';
 import './App.css';
@@ -92,6 +93,16 @@ function App() {
               element={
                 <ProtectedRoute requiredRole="admin">
                   <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Admin Orders Management */}
+            <Route
+              path="/admin/orders"
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <AdminOrders />
                 </ProtectedRoute>
               }
             />
