@@ -7,7 +7,11 @@ const bcrypt = require('bcryptjs');
 // @access  Public
 const register = async (req, res) => {
     try {
-        const { name, email, password } = req.body;
+        const { name, email, password, role } = req.body;
+
+        // Validate role if provided
+        const allowedRoles = ['user', 'admin'];
+        const userRole = role && allowedRoles.includes(role) ? role : 'user';
 
         // Check if user exists
         const userExists = await User.findOne({ email });
@@ -15,14 +19,17 @@ const register = async (req, res) => {
             return res.status(400).json({ message: 'User already exists' });
         }
 
-        // Create user
+        // Create user with specified role
         const user = await User.create({
             name,
             email,
-            password
+            password,
+            role: userRole
         });
 
         if (user) {
+            console.log(`✅ [Auth] New ${userRole} registered: ${email}`);
+
             res.status(201).json({
                 _id: user._id,
                 name: user.name,
@@ -33,6 +40,7 @@ const register = async (req, res) => {
             });
         }
     } catch (error) {
+        console.error('❌ [Auth] Registration error:', error);
         res.status(400).json({ message: error.message });
     }
 };

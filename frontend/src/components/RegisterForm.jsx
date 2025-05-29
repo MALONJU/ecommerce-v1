@@ -14,6 +14,9 @@ const validationSchema = Yup.object({
   password: Yup.string()
     .required('Mot de passe requis')
     .min(8, 'Au moins 8 caractères'),
+  role: Yup.string()
+    .required('Le rôle est requis')
+    .oneOf(['user', 'admin'], 'Le rôle doit être soit "user" soit "admin"'),
 });
 
 const RegisterForm = () => {
@@ -25,6 +28,7 @@ const RegisterForm = () => {
     firstName: '',
     email: '',
     password: '',
+    role: 'user', // Default to user role
     rememberMe: false,
   };
 
@@ -36,6 +40,7 @@ const RegisterForm = () => {
         name: values.firstName,
         email: values.email,
         password: values.password,
+        role: values.role, // Include role in userData
       };
 
       // Use AuthContext register method to properly update auth state
@@ -96,6 +101,22 @@ const RegisterForm = () => {
                     className={`form-control ${errors.password && touched.password ? 'is-invalid' : ''}`}
                   />
                   {errors.password && touched.password && <div className="invalid-feedback">{errors.password}</div>}
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="role" className="form-label">Rôle</label>
+                  <Field
+                    as="select"
+                    id="role"
+                    name="role"
+                    className={`form-select ${errors.role && touched.role ? 'is-invalid' : ''}`}
+                  >
+                    <option value="user">Utilisateur</option>
+                    <option value="admin">Administrateur</option>
+                  </Field>
+                  {errors.role && touched.role && <div className="invalid-feedback">{errors.role}</div>}
+                  <div className="form-text">
+                    Sélectionnez le rôle pour ce compte. Les administrateurs ont accès à toutes les fonctionnalités.
+                  </div>
                 </div>
                 <div className="mb-4">
                   <div className="form-check">
