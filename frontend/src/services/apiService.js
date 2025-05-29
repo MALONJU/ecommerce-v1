@@ -132,6 +132,27 @@ export const userService = {
   uploadAvatar: async (file, onProgress) => {
     return await apiClient.upload("/users/avatar", file, onProgress);
   },
+
+  // Admin User Management Services
+  getAllUsers: async () => {
+    return await apiClient.get("/users");
+  },
+
+  getUserById: async (id) => {
+    return await apiClient.get(`/users/${id}`);
+  },
+
+  updateUser: async (id, userData) => {
+    return await apiClient.put(`/users/${id}`, userData);
+  },
+
+  deleteUser: async (id) => {
+    return await apiClient.delete(`/users/${id}`);
+  },
+
+  updateUserRole: async (id, role) => {
+    return await apiClient.put(`/users/${id}/role`, { role });
+  },
 };
 
 // Order Services
