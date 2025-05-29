@@ -22,7 +22,7 @@
     @apply mt-1 text-sm text-red-500;
   }
 
-  .btn-primary {
+  .custom-btn-primary {
     @apply flex w-full justify-center rounded-md bg-mongodb-green px-3 py-2.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-mongodb-darkgreen focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mongodb-green transition-colors duration-200;
   }
 
