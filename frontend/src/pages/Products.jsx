@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import ProductModal from "../components/ProductModal";
+import { productService } from "../services/apiService";
 
 export default function Products() {
   const [products, setProducts] = useState([]);
@@ -13,12 +13,12 @@ export default function Products() {
   }, []);
 
   const fetchProducts = async () => {
-    const res = await axios.get("http://localhost:3000/api/products");
-    setProducts(res.data);
+    const data = await productService.getProducts();
+    setProducts(data);
   };
 
   const handleDelete = async (id) => {
-    await axios.delete(`http://localhost:3000/api/products/${id}`);
+    await productService.deleteProduct(id);
     fetchProducts();
   };
 
@@ -54,10 +54,16 @@ export default function Products() {
               <td>{prod.price} €</td>
               <td>{prod.description}</td>
               <td>
-                <button className="btn btn-warning btn-sm me-2" onClick={() => handleEdit(prod)}>
+                <button
+                  className="btn btn-warning btn-sm me-2"
+                  onClick={() => handleEdit(prod)}
+                >
                   Modifier
                 </button>
-                <button className="btn btn-danger btn-sm" onClick={() => handleDelete(prod._id)}>
+                <button
+                  className="btn btn-danger btn-sm"
+                  onClick={() => handleDelete(prod._id)}
+                >
                   Supprimer
                 </button>
               </td>
