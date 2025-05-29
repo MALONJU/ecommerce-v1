@@ -150,7 +150,7 @@ export default function Orders() {
                           {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                         </span>
                         <h5 className="mb-0 mt-2">
-                          <strong>${order.totalAmount}</strong>
+                          <strong>€{order.totalAmount}</strong>
                         </h5>
                       </div>
                     </div>

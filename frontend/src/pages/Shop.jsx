@@ -57,7 +57,7 @@ export default function Shop() {
   const handleOrderClick = async (product) => {
     // Show confirmation dialog
     const confirmOrder = window.confirm(
-      `Add "${product.name}" to your cart?\nPrice: $${product.price}\n\nThis will create an order for this item.`
+      `Add "${product.name}" to your cart?\nPrice: €${product.price}\n\nThis will create an order for this item.`
     );
 
     if (!confirmOrder) return;
@@ -84,7 +84,7 @@ export default function Shop() {
 
       await orderService.createOrder(orderData);
 
-      alert(`Order created successfully!\nProduct: ${product.name}\nPrice: $${product.price}`);
+      alert(`Order created successfully!\nProduct: ${product.name}\nPrice: €${product.price}`);
 
       // Refresh products to update stock
       fetchProducts();

@@ -236,7 +236,7 @@ export default function AdminOrders() {
                         {order.status}
                       </span>
                       <span className="text-lg font-bold text-gray-900">
-                        ${order.totalAmount}
+                        €{order.totalAmount}
                       </span>
                     </div>
                   </div>
@@ -258,7 +258,7 @@ export default function AdminOrders() {
                             {item.product?.name || "Product"}
                           </h5>
                           <p className="text-sm text-gray-600">
-                            Qty: {item.quantity} × ${item.product?.price || 0}
+                            Qty: {item.quantity} × €{item.product?.price || 0}
                           </p>
                         </div>
                       </div>

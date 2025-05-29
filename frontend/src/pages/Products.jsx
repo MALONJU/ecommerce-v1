@@ -150,7 +150,7 @@ export default function Products() {
                       <div className="fw-semibold">{prod.name}</div>
                     </td>
                     <td>
-                      <span className="fw-bold">${prod.price}</span>
+                      <span className="fw-bold">€{prod.price}</span>
                     </td>
                     <td>
                       <span className="badge bg-secondary">{prod.category || 'general'}</span>
