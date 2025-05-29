@@ -164,7 +164,9 @@ export default function Orders() {
                     Order Items ({order.items.length})
                   </h6>
                   <div className="row">
-                    {order.items.map((item, index) => (
+                    {order.items
+                      .filter(item => item.product)
+                      .map((item, index) => (
                       <div key={index} className="col-md-6 col-lg-4 mb-3">
                         <ProductCard
                           product={item.product}

@@ -7,6 +7,25 @@ const ProductCard = ({
   isOrderView = false,
   quantity = null,
 }) => {
+  // Handle case where product is null or undefined
+  if (!product) {
+    return (
+      <div className="product-card">
+        <div className="aspect-square bg-gray-100 flex items-center justify-center mb-4 p-4">
+          <div className="text-gray-400 text-sm font-medium">Product not available</div>
+        </div>
+        <div className="text-center">
+          <h3 className="font-medium text-gray-900 mb-2 uppercase tracking-wide text-sm">
+            Product Not Found
+          </h3>
+          <p className="text-gray-600 text-xs mb-3 line-height-relaxed">
+            This product is no longer available
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="product-card">
       {/* Product Image */}
