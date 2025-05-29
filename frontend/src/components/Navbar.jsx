@@ -101,13 +101,6 @@ const Navbar = () => {
                 My Orders
               </Link>
             </li>
-            <li className="nav-item">
-              <Link className={isActiveRoute('/products')} to="/products">
-                <i className="bi bi-box-seam me-1"></i>
-                Products
-              </Link>
-            </li>
-
             {/* Admin link - only show if user has admin role */}
             {getUserRole().toLowerCase().includes('admin') && (
               <li className="nav-item dropdown">
@@ -126,6 +119,12 @@ const Navbar = () => {
                     <Link className="dropdown-item" to="/admin">
                       <i className="bi bi-speedometer2 me-2"></i>
                       Dashboard
+                    </Link>
+                  </li>
+                  <li>
+                    <Link className="dropdown-item" to="/products">
+                      <i className="bi bi-box me-2"></i>
+                      Product Management
                     </Link>
                   </li>
                   <li>
