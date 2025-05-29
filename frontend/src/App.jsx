@@ -5,6 +5,8 @@ import ProtectedRoute from './components/ProtectedRoute.jsx';
 import Navbar from './components/Navbar.jsx';
 import LoginForm from './components/LoginForm.jsx';
 import RegisterForm from './components/RegisterForm.jsx';
+import UserManagementPage from './pages/UserManagementPage.jsx';
+import AdminDashboard from './pages/AdminDashboard.jsx';
 import './App.css';
 import Products from './pages/Products.jsx';
 
@@ -67,10 +69,17 @@ function App() {
               path="/admin"
               element={
                 <ProtectedRoute requiredRole="admin">
-                  <div className="container mt-4">
-                    <h1>Admin Panel</h1>
-                    <p>This is only accessible to admin users.</p>
-                  </div>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* User Management - Admin Only */}
+            <Route
+              path="/admin/users"
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <UserManagementPage />
                 </ProtectedRoute>
               }
             />

@@ -104,11 +104,31 @@ const Navbar = () => {
 
             {/* Admin link - only show if user has admin role */}
             {getUserRole().toLowerCase().includes('admin') && (
-              <li className="nav-item">
-                <Link className={isActiveRoute('/admin')} to="/admin">
+              <li className="nav-item dropdown">
+                <a
+                  className="nav-link dropdown-toggle"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
                   <i className="bi bi-gear me-1"></i>
                   Admin
-                </Link>
+                </a>
+                <ul className="dropdown-menu">
+                  <li>
+                    <Link className="dropdown-item" to="/admin">
+                      <i className="bi bi-speedometer2 me-2"></i>
+                      Dashboard
+                    </Link>
+                  </li>
+                  <li>
+                    <Link className="dropdown-item" to="/admin/users">
+                      <i className="bi bi-people me-2"></i>
+                      User Management
+                    </Link>
+                  </li>
+                </ul>
               </li>
             )}
           </ul>
