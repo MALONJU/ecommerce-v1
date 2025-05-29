@@ -2,7 +2,7 @@ import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { authService } from '../services/apiService.js';
+import { useAuth } from '../contexts/AuthContext.jsx';
 
 const validationSchema = Yup.object({
   firstName: Yup.string()
@@ -18,6 +18,7 @@ const validationSchema = Yup.object({
 
 const RegisterForm = () => {
   const [apiError, setApiError] = useState('');
+  const { register } = useAuth();
   const navigate = useNavigate();
 
   const initialValues = {
@@ -37,15 +38,14 @@ const RegisterForm = () => {
         password: values.password,
       };
 
-      const response = await authService.register(userData, values.rememberMe);
+      // Use AuthContext register method to properly update auth state
+      await register(userData, values.rememberMe);
 
-      if (response.token) {
-        // Redirect to profile page after successful registration
-        navigate('/profile');
-      }
+      // Redirect to dashboard after successful registration
+      navigate('/dashboard', { replace: true });
 
       resetForm();
-      console.log('Inscription réussie:', response);
+      console.log('Inscription réussie');
     } catch (error) {
       console.error('Erreur lors de l\'inscription:', error);
       setApiError(

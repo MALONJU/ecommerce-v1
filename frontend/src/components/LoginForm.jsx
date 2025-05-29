@@ -1,8 +1,8 @@
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { authService } from '../services/apiService.js';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext.jsx';
 
 const validationSchema = Yup.object({
   email: Yup.string().email('Email invalide').required('Email requis'),
@@ -11,7 +11,9 @@ const validationSchema = Yup.object({
 
 const LoginForm = () => {
   const [apiError, setApiError] = useState('');
+  const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const initialValues = {
     email: '',
@@ -23,15 +25,16 @@ const LoginForm = () => {
     try {
       setApiError('');
 
-      const response = await authService.login(
+      // Use AuthContext login method to properly update auth state
+      await login(
         { email: values.email, password: values.password },
         values.rememberMe
       );
 
-      if (response.token) {
-        // Redirect to products page after successful login
-        navigate('/products');
-      }
+      // Check if user was trying to access a protected route before login
+      const from = location.state?.from?.pathname || '/dashboard';
+      navigate(from, { replace: true });
+
     } catch (error) {
       console.error('Login error:', error);
       setApiError(
