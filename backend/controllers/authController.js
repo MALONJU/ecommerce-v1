@@ -69,6 +69,45 @@ const login = async (req, res) => {
     }
 };
 
+// @desc    Logout user
+// @route   POST /api/auth/logout
+// @access  Public (since we're just invalidating tokens)
+const logout = async (req, res) => {
+    try {
+        const { refreshToken } = req.body;
+
+        // Log the logout attempt
+        console.log('🔐 [Auth] Logout request received');
+
+        // In a production application, you would:
+        // 1. Add the refresh token to a blacklist/revoked tokens database
+        // 2. Optionally invalidate all sessions for the user
+        // 3. Clear any server-side session data
+
+        // For now, we'll just acknowledge the logout
+        // The client-side will handle clearing the tokens from storage
+
+        if (refreshToken) {
+            console.log('🔐 [Auth] Refresh token provided for logout');
+            // TODO: Add refresh token to blacklist in database
+            // await RefreshToken.create({ token: refreshToken, revokedAt: new Date() });
+        }
+
+        res.json({
+            message: 'Logout successful',
+            success: true
+        });
+
+        console.log('✅ [Auth] Logout completed successfully');
+    } catch (error) {
+        console.error('❌ [Auth] Logout error:', error);
+        res.status(500).json({
+            message: 'Logout failed',
+            error: error.message
+        });
+    }
+};
+
 // @desc    Reset password
 // @route   POST /api/auth/reset-password
 // @access  Public
@@ -141,6 +180,7 @@ const refreshToken = async (req, res) => {
 module.exports = {
     register,
     login,
+    logout,
     resetPassword,
     getMe,
     refreshToken
