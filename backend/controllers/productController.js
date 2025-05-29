@@ -6,7 +6,7 @@ const Product = require('../models/Product');
 const createProduct = async (req, res) => {
     try {
         const { name, description, price, imageUrl, stock, category } = req.body;
-        
+
         const product = await Product.create({
             name,
             description,
@@ -99,4 +99,4 @@ module.exports = {
     getProductById,
     updateProduct,
     deleteProduct
-}; 
+};
