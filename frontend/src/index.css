@@ -15,7 +15,7 @@
   }
 
   .error-field {
-    @apply ring-2 ring-red-500/20 !important;
+    @apply ring-2 ring-red-500/20;
   }
 
   .error-message {
