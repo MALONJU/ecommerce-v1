@@ -99,10 +99,14 @@ export default function Shop() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading products...</p>
+      <div className="container py-5">
+        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '400px' }}>
+          <div className="text-center">
+            <div className="spinner-border text-primary mb-3" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+            <p className="text-muted">Loading products...</p>
+          </div>
         </div>
       </div>
     );
@@ -110,15 +114,17 @@ export default function Shop() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-red-500 text-lg mb-4">{error}</div>
-          <button
-            onClick={fetchProducts}
-            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
-          >
-            Try Again
-          </button>
+      <div className="container py-5">
+        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '400px' }}>
+          <div className="text-center">
+            <div className="alert alert-danger mb-3">{error}</div>
+            <button
+              onClick={fetchProducts}
+              className="btn btn-primary"
+            >
+              Try Again
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -200,8 +206,13 @@ export default function Shop() {
 
         {/* Order Loading Indicator */}
         {orderLoading && (
-          <div className="fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg">
-            Creating order...
+          <div className="position-fixed top-0 end-0 p-3" style={{ zIndex: 1055 }}>
+            <div className="alert alert-success d-flex align-items-center">
+              <div className="spinner-border spinner-border-sm me-2" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </div>
+              Creating order...
+            </div>
           </div>
         )}
 
